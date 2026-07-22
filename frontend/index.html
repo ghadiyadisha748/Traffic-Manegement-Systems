@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JUNCTION — Control Console</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* chassis (light) */
+    --chassis-0:#efe9dd;
+    --chassis-1:#e6dfd0;
+    --chassis-brd:#d3c9b6;
+    --chassis-shadow:rgba(90,75,50,0.14);
+    --ink-dark:#211d16;
+    --ink-dark-soft:#6b6355;
+    /* screens (dark) */
+    --screen-0:#121210;
+    --screen-1:#1a1a16;
+    --screen-brd:#302c22;
+    --phosphor-amber:#ffb020;
+    --phosphor-amber-dim:rgba(255,176,32,0.16);
+    --phosphor-green:#37c47a;
+    --phosphor-green-dim:rgba(55,196,122,0.16);
+    --phosphor-red:#e6483f;
+    --phosphor-red-dim:rgba(230,72,63,0.16);
+    --ink-light:#f2ede0;
+    --ink-light-soft:#8d8877;
+    /* brand accent (AI / predictive, distinct from literal signal colors) */
+    --accent:#3d4ec2;
+    --accent-dim:rgba(61,78,194,0.14);
+
+    --disp:'Big Shoulders Display',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    background:
+      radial-gradient(1200px 500px at 90% -10%, rgba(61,78,194,0.05), transparent 60%),
+      linear-gradient(180deg,var(--chassis-0),var(--chassis-1));
+    color:var(--ink-dark);
+    font-family:var(--body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1360px;margin:0 auto;padding:26px 24px 40px;}
+
+  /* ---------- Chassis panel (light housing) ---------- */
+  .chassis{
+    background:linear-gradient(180deg,#f4efe4,#e9e2d2);
+    border:1px solid var(--chassis-brd);
+    border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 26px var(--chassis-shadow);
+    position:relative;
+  }
+  .screw{position:absolute;width:6px;height:6px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #fff, #c9bfa9 60%, #a89d84);
+    box-shadow:0 1px 1px rgba(0,0,0,0.3);}
+  .screw.tl{top:9px;left:9px;} .screw.tr{top:9px;right:9px;}
+  .screw.bl{bottom:9px;left:9px;} .screw.br{bottom:9px;right:9px;}
+
+  /* ---------- Screen (dark embedded display) ---------- */
+  .screen{
+    background:linear-gradient(180deg,var(--screen-0),var(--screen-1));
+    border:1px solid var(--screen-brd);
+    border-radius:9px;
+    box-shadow:inset 0 2px 10px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(0,0,0,0.3);
+    color:var(--ink-light);
+    position:relative;
+    overflow:hidden;
+  }
+  .screen::after{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px);
+  }
+  .screen-label{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink-light-soft);}
+
+  /* ---------- Header ---------- */
+  header.chassis{padding:16px 22px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+  .brand{display:flex;align-items:center;gap:14px;}
+  .power-toggle{width:52px;height:28px;border-radius:14px;background:#d9cfba;border:1px solid var(--chassis-brd);
+    position:relative;cursor:pointer;box-shadow:inset 0 2px 4px rgba(90,75,50,0.25);flex:none;}
+  .power-toggle .knob{position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+    background:linear-gradient(180deg,#fff,#e2dac6);box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:left 0.25s ease;}
+  .power-toggle.on{background:var(--phosphor-green-dim);}
+  .power-toggle.on .knob{left:26px;background:linear-gradient(180deg,#fff,#c6f2d9);}
+  .brand-text .name{font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:0.5px;text-transform:uppercase;line-height:0.9;}
+  .brand-text .sub{font-family:var(--mono);font-size:10.5px;color:var(--ink-dark-soft);letter-spacing:1.4px;text-transform:uppercase;margin-top:5px;}
+  .header-right{display:flex;align-items:center;gap:10px;}
+  .led-pill{display:flex;align-items:center;gap:7px;background:#e2dac6;border:1px solid var(--chassis-brd);
+    padding:7px 13px;border-radius:20px;font-size:11px;color:var(--ink-dark-soft);font-family:var(--mono);
+    box-shadow:inset 0 1px 3px rgba(90,75,50,0.15);}
+  .led-dot{width:6px;height:6px;border-radius:50%;background:var(--phosphor-red);box-shadow:0 0 6px var(--phosphor-red);animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+  .clock{font-family:var(--mono);font-size:11px;color:var(--ink-dark-soft);}
+
+  /* ---------- Emergency banner ---------- */
+  .emergency{
+    display:none;align-items:center;gap:12px;padding:13px 18px;margin-bottom:16px;
+    border-radius:10px;border:1px solid rgba(230,72,63,0.35);
+    background:linear-gradient(90deg,rgba(230,72,63,0.12),rgba(230,72,63,0.02));
+  }
+  .emergency.show{display:flex;animation:slidein 0.4s ease;}
+  @keyframes slidein{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+  .emergency .icon{width:32px;height:32px;border-radius:8px;background:var(--phosphor-red-dim);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none;color:var(--phosphor-red);}
+  .emergency .txt{font-size:12.5px;color:var(--ink-dark);}
+  .emergency .txt small{display:block;color:var(--ink-dark-soft);font-size:11px;margin-top:2px;font-family:var(--mono);}
+
+  /* ---------- Top grid ---------- */
+  .grid-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;}
+  @media(max-width:1020px){.grid-top{grid-template-columns:1fr;}}
+
+  .radar-chassis{padding:22px;}
+  .radar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .radar-top h2{font-family:var(--disp);font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:0.4px;}
+  .status-led{font-family:var(--mono);font-size:10.5px;padding:5px 11px;border-radius:20px;letter-spacing:1px;font-weight:700;}
+  .status-led.low{background:var(--phosphor-green-dim);color:#1f8955;}
+  .status-led.medium{background:var(--phosphor-amber-dim);color:#a9670b;}
+  .status-led.high{background:var(--phosphor-red-dim);color:#b8332b;}
+
+  .radar-stage{position:relative;width:100%;aspect-ratio:1/1;max-width:400px;margin:6px auto 8px;}
+  .radar-screen{position:absolute;inset:26px;border-radius:50%;overflow:hidden;}
+  #radarCanvas{width:100%;height:100%;display:block;}
+  .bezel-led{position:absolute;width:26px;height:44px;border-radius:6px;background:linear-gradient(180deg,#e9e2d2,#d9cfba);
+    border:1px solid var(--chassis-brd);display:flex;flex-direction:column;align-items:center;justify-content:space-around;
+    padding:5px 0;box-shadow:0 2px 4px rgba(90,75,50,0.2);}
+  .bezel-led i{width:8px;height:8px;border-radius:50%;background:#bdb39c;}
+  .bezel-led i.on-r{background:var(--phosphor-red);box-shadow:0 0 8px var(--phosphor-red);}
+  .bezel-led i.on-a{background:var(--phosphor-amber);box-shadow:0 0 8px var(--phosphor-amber);}
+  .bezel-led i.on-g{background:var(--phosphor-green);box-shadow:0 0 8px var(--phosphor-green);}
+  .arm-tag{position:absolute;font-family:var(--mono);font-size:9px;color:var(--ink-dark-soft);letter-spacing:1px;font-weight:600;}
+
+  /* AI Camera Panel */
+  .camera-chassis{padding:22px;display:flex;flex-direction:column;}
+  .camera-chassis h2{font-family:var(--disp);font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;}
+  .camera-chassis .sub{font-family:var(--mono);font-size:10px;color:var(--ink-dark-soft);letter-spacing:1.4px;text-transform:uppercase;margin-bottom:14px;}
+  .camera-screen{flex:1; border-radius:8px; overflow:hidden; position:relative; background:#000; min-height: 250px;}
+  .camera-screen img {width: 100%; height: 100%; object-fit: cover;}
+  .camera-stats {display:flex; justify-content:space-between; margin-top:10px; font-family:var(--mono); font-size:10px; color:var(--ink-dark-soft);}
+
+  .manifest-chassis{padding:22px;display:flex;flex-direction:column;}
+  .manifest-chassis h2{font-family:var(--disp);font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;}
+  .manifest-chassis .sub{font-family:var(--mono);font-size:10px;color:var(--ink-dark-soft);letter-spacing:1.4px;text-transform:uppercase;margin-bottom:14px;}
+  .manifest-screen{padding:14px 16px;flex:1;}
+  .m-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-family:var(--mono);}
+  .m-row:last-child{border-bottom:none;}
+  .m-label{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--ink-light-soft);letter-spacing:0.5px;}
+  .m-icon{width:8px;height:8px;border-radius:2px;}
+  .m-val{font-weight:700;font-size:14.5px;color:var(--ink-light);}
+  .m-total{margin-top:10px;padding-top:12px;border-top:1px dashed rgba(255,255,255,0.12);display:flex;justify-content:space-between;align-items:baseline;}
+  .m-total .num{font-family:var(--disp);font-size:38px;font-weight:800;line-height:0.85;color:var(--phosphor-green);text-shadow:0 0 12px rgba(55,196,122,0.4);}
+  .m-total .lbl{font-family:var(--mono);font-size:9.5px;color:var(--ink-light-soft);letter-spacing:1.4px;}
+
+  /* pedestrian countdown */
+  .ped-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--chassis-brd);}
+  .ped-label{font-family:var(--mono);font-size:10px;color:var(--ink-dark-soft);letter-spacing:1px;}
+  .ped-count{font-family:var(--disp);font-size:22px;font-weight:800;color:var(--accent);}
+
+  /* ---------- Instrument cluster (gauges) ---------- */
+  .stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+  @media(max-width:900px){.stat-strip{grid-template-columns:repeat(2,1fr);}}
+  .gauge-chassis{padding:12px;}
+  .gauge-screen{padding:12px 10px 8px;text-align:center;}
+  .gauge-screen .eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink-light-soft);margin-bottom:4px;}
+  .gauge-screen svg{width:100%;max-width:130px;}
+  .gauge-val{font-family:var(--disp);font-size:23px;font-weight:800;margin-top:-26px;color:var(--ink-light);}
+  .gauge-unit{font-family:var(--mono);font-size:9px;color:var(--ink-light-soft);margin-top:2px;}
+
+  /* ---------- Mid grid ---------- */
+  .grid-mid{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:16px;margin-bottom:18px;}
+  @media(max-width:1020px){.grid-mid{grid-template-columns:1fr;}}
+  .mid-chassis{padding:16px;}
+  .mid-chassis h3{font-family:var(--disp);font-weight:800;font-size:14px;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:12px;color:var(--ink-dark-soft);}
+  .mid-screen{padding:16px;min-height:150px;}
+
+  .dial-wrap{display:flex;flex-direction:column;align-items:center;}
+  .dial-text{margin-top:6px;font-size:11.5px;color:var(--ink-light-soft);text-align:center;line-height:1.5;font-family:var(--body);}
+  .dial-text b{color:var(--ink-light);}
+
+  .lane-block{margin-bottom:12px;}
+  .lane-block:last-child{margin-bottom:0;}
+  .lane-top{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;margin-bottom:5px;}
+  .lane-top .name{color:var(--ink-light-soft);}
+  .lane-top .time{color:var(--ink-light);font-weight:700;}
+  .led-track{display:flex;gap:3px;}
+  .led-seg{flex:1;height:10px;border-radius:2px;background:rgba(255,255,255,0.05);}
+  .led-seg.filled{background:var(--phosphor-green);box-shadow:0 0 5px rgba(55,196,122,0.5);}
+  .led-seg.filled.amber{background:var(--phosphor-amber);box-shadow:0 0 5px rgba(255,176,32,0.5);}
+  .led-seg.filled.red{background:var(--phosphor-red);box-shadow:0 0 5px rgba(230,72,63,0.5);}
+
+  .signboard .sb-line{font-family:var(--mono);font-size:12.5px;color:var(--phosphor-amber);letter-spacing:1px;line-height:1.8;text-shadow:0 0 6px rgba(255,176,32,0.5);}
+  .signboard .sb-line.dim{color:rgba(255,176,32,0.55);font-size:10.5px;}
+  .blink{animation:blink 1s step-start infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  /* ---------- Weather + override row ---------- */
+  .grid-lower{display:grid;grid-template-columns:1fr 1.3fr;gap:16px;margin-bottom:18px;}
+  @media(max-width:1020px){.grid-lower{grid-template-columns:1fr;}}
+  .weather-chassis{padding:16px;}
+  .weather-chassis h3{font-family:var(--disp);font-weight:800;font-size:14px;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:12px;color:var(--ink-dark-soft);}
+  .weather-row{display:flex;align-items:center;gap:14px;}
+  .weather-icon{font-size:30px;}
+  .weather-info .temp{font-family:var(--disp);font-size:26px;font-weight:800;}
+  .weather-info .cond{font-family:var(--mono);font-size:10.5px;color:var(--ink-dark-soft);letter-spacing:0.5px;margin-top:2px;}
+  .weather-note{margin-top:10px;font-size:11px;color:var(--ink-dark-soft);font-family:var(--body);line-height:1.5;padding-top:10px;border-top:1px solid var(--chassis-brd);}
+
+  .override-chassis{padding:16px;}
+  .override-chassis h3{font-family:var(--disp);font-weight:800;font-size:14px;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:14px;color:var(--ink-dark-soft);}
+  .switch-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .switch-unit{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .rocker{width:44px;height:24px;border-radius:12px;background:#d9cfba;border:1px solid var(--chassis-brd);
+    position:relative;cursor:pointer;box-shadow:inset 0 2px 4px rgba(90,75,50,0.25);}
+  .rocker .rknob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;
+    background:linear-gradient(180deg,#fff,#e2dac6);box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:left 0.25s ease;}
+  .rocker.on{background:var(--phosphor-green-dim);}
+  .rocker.on .rknob{left:22px;background:linear-gradient(180deg,#fff,#c6f2d9);}
+  .switch-label{font-family:var(--mono);font-size:9.5px;color:var(--ink-dark-soft);letter-spacing:0.8px;text-align:center;text-transform:uppercase;}
+  .emergency-btn{grid-column:span 3;margin-top:4px;padding:10px;border-radius:8px;border:1px solid rgba(230,72,63,0.4);
+    background:var(--phosphor-red-dim);color:#b8332b;font-family:var(--mono);font-size:11px;letter-spacing:1px;
+    font-weight:700;cursor:pointer;text-transform:uppercase;}
+  .emergency-btn:hover{background:rgba(230,72,63,0.22);}
+
+  /* ---------- Charts ---------- */
+  .grid-charts{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:18px;}
+  @media(max-width:1020px){.grid-charts{grid-template-columns:1fr;}}
+  .chart-chassis{padding:16px;}
+  .chart-chassis h3{font-family:var(--disp);font-weight:800;font-size:14px;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:12px;color:var(--ink-dark-soft);}
+  .chart-screen{padding:14px;}
+  .chart-wrap{height:190px;}
+
+  /* ---------- Console log ---------- */
+  .console-chassis{padding:14px;}
+  .console-screen{padding:12px 16px;height:120px;overflow:hidden;position:relative;}
+  .console-line{font-family:var(--mono);font-size:11px;color:var(--phosphor-green);letter-spacing:0.3px;
+    padding:2px 0;opacity:0;animation:fadein 0.4s ease forwards;}
+  .console-line .ts{color:var(--ink-light-soft);margin-right:8px;}
+  @keyframes fadein{to{opacity:1;}}
+
+  footer{text-align:center;color:var(--ink-dark-soft);font-size:10.5px;margin-top:22px;font-family:var(--mono);letter-spacing:0.5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="chassis">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="brand">
+      <div class="power-toggle on" id="powerToggle"><div class="knob"></div></div>
+      <div class="brand-text">
+        <div class="name">Junction Console</div>
+        <div class="sub">Predictive Signal &amp; Emission Control</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="led-pill"><span class="led-dot"></span> CAM 04 · RING ROAD 4B</div>
+      <div class="clock" id="clock">--:--:--</div>
+    </div>
+  </header>
+
+  <div class="emergency" id="emergencyBanner">
+    <div class="icon">▲</div>
+    <div class="txt" id="emergencyTxt">Emergency vehicle detected — Road A green corridor engaged
+      <small id="emergencySub">Conflicting approaches held at RED · 20s override</small>
+    </div>
+  </div>
+
+  <div class="grid-top">
+    <!-- Existing Radar -->
+    <div class="chassis radar-chassis">
+      <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+      <div class="radar-top">
+        <h2>4-Way Intersection</h2>
+        <div class="status-led high" id="roadStatusChip">HIGH</div>
+      </div>
+      <div class="radar-stage">
+        <div class="radar-screen screen"><canvas id="radarCanvas" width="500" height="500"></canvas></div>
+        <div class="bezel-led" id="sig-N" style="top:0;left:50%;transform:translate(-50%,0);"><i></i><i></i><i></i></div>
+        <div class="arm-tag" style="top:42px;left:50%;transform:translateX(-50%);">ROAD A · N</div>
+        <div class="bezel-led" id="sig-S" style="bottom:0;left:50%;transform:translate(-50%,0);"><i></i><i></i><i></i></div>
+        <div class="arm-tag" style="bottom:42px;left:50%;transform:translateX(-50%);">ROAD C · S</div>
+        <div class="bezel-led" id="sig-E" style="right:-6px;top:50%;transform:translate(0,-50%) rotate(90deg);"><i></i><i></i><i></i></div>
+        <div class="arm-tag" style="right:40px;top:50%;transform:translateY(-50%);">ROAD B · E</div>
+        <div class="bezel-led" id="sig-W" style="left:-6px;top:50%;transform:translate(0,-50%) rotate(90deg);"><i></i><i></i><i></i></div>
+        <div class="arm-tag" style="left:40px;top:50%;transform:translateY(-50%);">ROAD D · W</div>
+      </div>
+    </div>
+
+    <!-- NEW Live Camera Panel -->
+    <div class="chassis camera-chassis">
+      <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+      <h2>Live AI Camera</h2>
+      <div class="sub">YOLOv8 Detection Feed</div>
+      <div class="camera-screen screen">
+        <img id="liveVideo" src="http://localhost:8000/video_feed" alt="Live Camera Feed">
+      </div>
+      <div class="camera-stats">
+        <span id="camFps">FPS: --</span>
+        <span id="camConf">CONF: --%</span>
+        <span id="camInf">INF: --ms</span>
+      </div>
+    </div>
+
+    <!-- Existing Classification Manifest -->
+    <div class="chassis manifest-chassis">
+      <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+      <h2>Classification</h2>
+      <div class="sub">YOLOv8 · current frame</div>
+      <div class="manifest-screen screen">
+        <div id="countRows"></div>
+        <div class="m-total">
+          <div><div class="num" id="totalCount">0</div><div class="lbl">TOTAL VEHICLES</div></div>
+        </div>
+      </div>
+      <div class="ped-row">
+        <div class="ped-label">PEDESTRIAN CROSSING · WALK</div>
+        <div class="ped-count" id="pedCount">14s</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-strip">
+    <div class="chassis gauge-chassis"><div class="gauge-screen screen"><div class="eyebrow">Avg. Wait</div><div id="gaugeWait"></div><div class="gauge-val" id="waitVal">42</div><div class="gauge-unit">SECONDS</div></div></div>
+    <div class="chassis gauge-chassis"><div class="gauge-screen screen"><div class="eyebrow">Fuel Saved</div><div id="gaugeFuel"></div><div class="gauge-val" id="fuelVal">2.1</div><div class="gauge-unit">L / HR</div></div></div>
+    <div class="chassis gauge-chassis"><div class="gauge-screen screen"><div class="eyebrow">CO₂ Cut</div><div id="gaugeCo2"></div><div class="gauge-val" id="co2Val">18</div><div class="gauge-unit">PERCENT</div></div></div>
+    <div class="chassis gauge-chassis"><div class="gauge-screen screen"><div class="eyebrow">Lane Load</div><div id="gaugeLane"></div><div class="gauge-val" id="laneVal">76</div><div class="gauge-unit">PERCENT</div></div></div>
+  </div>
+
+  <div class="grid-mid">
+    <div class="chassis mid-chassis">
+      <h3>Congestion Forecast</h3>
+      <div class="mid-screen screen">
+        <div class="dial-wrap">
+          <div id="predictDial"></div>
+          <div class="dial-text">Road A trending toward <b>severe congestion</b> in <b id="predictMins">8</b> min</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chassis mid-chassis">
+      <h3>Signal Cycle — 120s</h3>
+      <div class="mid-screen screen"><div id="signalRows"></div></div>
+    </div>
+
+    <div class="chassis mid-chassis">
+      <h3>Diversion Advisory</h3>
+      <div class="mid-screen screen signboard" id="signboardPanel">
+        <div class="sb-line">&gt; ROAD A: HEAVY</div>
+        <div class="sb-line">&gt; USE ROAD B — RING LINK</div>
+        <div class="sb-line dim">EST. SAVING 8 MIN<span class="blink">_</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-lower">
+    <div class="chassis weather-chassis">
+      <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw bl"></span><span class="screw br"></span>
+      <h3>Ambient Conditions</h3>
+      <div class="weather-row">
+        <div class="weather-icon" id="weatherIcon">☀️</div>
+        <div class="weather-info">
+          <div class="temp" id="weatherTemp">31°C</div>
+          <div class="cond" id="weatherCond">CLEAR · VISIBILITY HIGH</div>
+        </div>
+      </div>
+      <div class="weather-note" id="weatherNote">Detection confidence unaffected. No prediction adjustment applied.</div>
+    </div>
+
+    <div class="chassis override-chassis">
+      <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+      <h3>Manual Override</h3>
+      <div class="switch-row">
+        <div class="switch-unit">
+          <div class="rocker on" id="swAuto"><div class="rknob"></div></div>
+          <div class="switch-label">Auto Mode</div>
+        </div>
+        <div class="switch-unit">
+          <div class="rocker on" id="swCamera"><div class="rknob"></div></div>
+          <div class="switch-label">Camera Feed</div>
+        </div>
+        <div class="switch-unit">
+          <div class="rocker" id="swNight"><div class="rknob"></div></div>
+          <div class="switch-label">Night Mode</div>
+        </div>
+        <button class="emergency-btn" id="testEmergencyBtn">Trigger Emergency Test</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-charts">
+    <div class="chassis chart-chassis">
+      <h3>Vehicle Count — Last 60 Min</h3>
+      <div class="chart-screen screen"><div class="chart-wrap"><canvas id="vehicleChart"></canvas></div></div>
+    </div>
+    <div class="chassis chart-chassis">
+      <h3>Congestion Probability</h3>
+      <div class="chart-screen screen"><div class="chart-wrap"><canvas id="congestionChart"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="chassis console-chassis">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="console-screen screen" id="consoleScreen"></div>
+  </div>
+
+  <footer>JUNCTION CONSOLE PROTOTYPE · AI BACKEND INTEGRATION ACTIVE</footer>
+</div>
+
+<script>
+// ---------------- Clock ----------------
+function tickClock(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB'); }
+setInterval(tickClock,1000); tickClock();
+
+// ---------------- Power / switches ----------------
+function wireToggle(id, initial, onChange){
+  const el = document.getElementById(id);
+  let state = initial;
+  el.addEventListener('click', ()=>{
+    state = !state;
+    el.classList.toggle('on', state);
+    onChange(state);
+  });
+  return ()=>state;
+}
+let systemOn = true, autoMode = true, cameraOn = true, nightMode = false;
+wireToggle('powerToggle', true, v=>{ systemOn=v; });
+wireToggle('swAuto', true, v=>{ autoMode=v; });
+wireToggle('swCamera', true, v=>{ 
+    cameraOn=v; 
+    document.getElementById('liveVideo').style.display = v ? 'block' : 'none'; 
+});
+wireToggle('swNight', false, v=>{ nightMode=v; document.body.style.filter = v ? 'brightness(0.92) saturate(0.9)' : 'none'; });
+
+// ---------------- Vehicle classes ----------------
+const vehicleTypes = [
+  {name:'Car', color:'#3d4ec2'},
+  {name:'Motorcycle', color:'#ffb020'},
+  {name:'Bus', color:'#8b8fe8'},
+  {name:'Truck', color:'#e6483f'},
+  {name:'Person', color:'#37c47a'},
+  {name:'TrafficSign', color:'#f2ede0'},
+];
+const countRowsEl = document.getElementById('countRows');
+vehicleTypes.forEach(v=>{
+  const row = document.createElement('div');
+  row.className='m-row';
+  const label = v.name.replace(/([A-Z])/g,' $1').trim().toUpperCase();
+  row.innerHTML = `<div class="m-label"><span class="m-icon" style="background:${v.color}"></span>${label}</div><div class="m-val" id="cnt-${v.name}">0</div>`;
+  countRowsEl.appendChild(row);
+});
+
+// ---------------- Gauges ----------------
+function makeGauge(container, color){
+  container.innerHTML = `
+  <svg viewBox="0 0 150 90">
+    <path d="M15,80 A60,60 0 1,1 135,80" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10" stroke-linecap="round"/>
+    <path class="needle-arc" d="M15,80 A60,60 0 1,1 135,80" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round"
+      stroke-dasharray="264" stroke-dashoffset="264"/>
+  </svg>`;
+  return container.querySelector('.needle-arc');
+}
+const gWait = makeGauge(document.getElementById('gaugeWait'), '#3d4ec2');
+const gFuel = makeGauge(document.getElementById('gaugeFuel'), '#37c47a');
+const gCo2  = makeGauge(document.getElementById('gaugeCo2'), '#37c47a');
+const gLane = makeGauge(document.getElementById('gaugeLane'), '#ffb020');
+function setGauge(arc, pct){ arc.setAttribute('stroke-dashoffset', 264 - (264*Math.min(100,Math.max(0,pct))/100)); }
+
+document.getElementById('predictDial').innerHTML = `
+<svg viewBox="0 0 180 108" style="width:180px">
+  <path d="M18,96 A72,72 0 1,1 162,96" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12" stroke-linecap="round"/>
+  <path id="predictArc" d="M18,96 A72,72 0 1,1 162,96" fill="none" stroke="#ffb020" stroke-width="12" stroke-linecap="round" stroke-dasharray="317" stroke-dashoffset="80"/>
+  <text id="predictText" x="90" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="26" font-weight="700" fill="#f2ede0">0%</text>
+</svg>`;
+const predictArc = document.getElementById('predictArc');
+const predictText = document.getElementById('predictText');
+
+// ---------------- Signal setup ----------------
+const lanes = [{name:'Road A', arm:'N'},{name:'Road B', arm:'E'},{name:'Road C', arm:'S'},{name:'Road D', arm:'W'}];
+const signalRowsEl = document.getElementById('signalRows');
+const SEGMENTS = 12;
+lanes.forEach(l=>{
+  const id = l.name.replace(' ','');
+  const block = document.createElement('div');
+  block.className='lane-block';
+  let segs=''; for(let i=0;i<SEGMENTS;i++) segs += `<div class="led-seg" id="seg-${id}-${i}"></div>`;
+  block.innerHTML = `<div class="lane-top"><span class="name">${l.name.toUpperCase()} (${l.arm})</span><span class="time" id="time-${id}">0s</span></div><div class="led-track">${segs}</div>`;
+  signalRowsEl.appendChild(block);
+});
+function setArmLight(arm, state){
+  const el = document.getElementById('sig-'+arm);
+  el.querySelectorAll('i').forEach(i=> i.className='');
+  if(state==='green') el.children[2].className='on-g';
+  else if(state==='amber') el.children[1].className='on-a';
+  else el.children[0].className='on-r';
+}
+
+// ---------------- Radar (decorative loop) ----------------
+const canvas = document.getElementById('radarCanvas');
+const ctx = canvas.getContext('2d');
+const W=canvas.width, H=canvas.height, CX=W/2, CY=H/2, R=W/2-6;
+let sweepAngle=0; let blips=[];
+const armAngles = {N:-90, E:0, S:90, W:180};
+function seedBlips(){
+  blips=[];
+  Object.keys(armAngles).forEach(arm=>{
+    const n = 3+Math.floor(Math.random()*4);
+    for(let i=0;i<n;i++){
+      blips.push({arm, dist: 0.3+Math.random()*0.65, angOff:(Math.random()-0.5)*14, speed:0.0025+Math.random()*0.003, color: vehicleTypes[Math.floor(Math.random()*(vehicleTypes.length-1))].color});
+    }
+  });
+}
+seedBlips(); setInterval(seedBlips, 4000);
+function drawRadar(){
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(55,196,122,0.12)';
+  for(let r=R*0.33;r<=R;r+=R*0.33){ ctx.beginPath(); ctx.arc(CX,CY,r,0,Math.PI*2); ctx.stroke(); }
+  ctx.fillStyle='rgba(55,196,122,0.04)';
+  ctx.fillRect(CX-30,0,60,H); ctx.fillRect(0,CY-30,W,60);
+  ctx.strokeStyle='rgba(55,196,122,0.18)'; ctx.setLineDash([5,6]);
+  ctx.beginPath(); ctx.moveTo(CX,0); ctx.lineTo(CX,H); ctx.moveTo(0,CY); ctx.lineTo(W,CY); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.save();
+  ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.clip();
+  const grad = ctx.createConicGradient ? ctx.createConicGradient(sweepAngle, CX, CY) : null;
+  if(grad){ grad.addColorStop(0,'rgba(55,196,122,0.3)'); grad.addColorStop(0.06,'rgba(55,196,122,0.0)'); grad.addColorStop(1,'rgba(55,196,122,0.0)'); ctx.fillStyle=grad; ctx.fillRect(0,0,W,H); }
+  sweepAngle += 0.02;
+  blips.forEach(b=>{ b.dist -= b.speed; if(b.dist<0.12) b.dist = 0.85+Math.random()*0.1; const baseAng = armAngles[b.arm]*Math.PI/180; const ang = baseAng + (b.angOff*Math.PI/180); const x = CX + Math.cos(ang)*R*b.dist; const y = CY + Math.sin(ang)*R*b.dist; ctx.fillStyle=b.color; ctx.shadowColor=b.color; ctx.shadowBlur=8; ctx.beginPath(); ctx.arc(x,y,4.5,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0; });
+  ctx.restore();
+  ctx.fillStyle='#0c0f0c'; ctx.beginPath(); ctx.arc(CX,CY,16,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='rgba(55,196,122,0.35)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(CX,CY,16,0,Math.PI*2); ctx.stroke();
+  requestAnimationFrame(drawRadar);
+}
+drawRadar();
+
+// ---------------- Charts ----------------
+const timeLabels = Array.from({length:12},(_,i)=>`-${(11-i)*5}m`); timeLabels[11]='now';
+const chartDefaults = {
+  responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+  animation: { duration: 0 },
+  scales:{ x:{grid:{color:'rgba(255,255,255,0.06)'}, ticks:{color:'#8d8877', font:{family:'JetBrains Mono', size:9.5}}}, y:{grid:{color:'rgba(255,255,255,0.06)'}, ticks:{color:'#8d8877', font:{family:'JetBrains Mono', size:9.5}}, beginAtZero:true} }
+};
+const vehicleChart = new Chart(document.getElementById('vehicleChart'), {
+  type:'line',
+  data:{labels:timeLabels, datasets:[{data:[], borderColor:'#3d4ec2', backgroundColor:'rgba(61,78,194,0.18)', fill:true, tension:0.4, pointRadius:0, borderWidth:2.5}]},
+  options:chartDefaults
+});
+const congestionChart = new Chart(document.getElementById('congestionChart'), {
+  type:'bar',
+  data:{labels:timeLabels, datasets:[{data:[], backgroundColor:[], borderRadius:3, borderSkipped:false}]},
+  options:chartDefaults
+});
+
+// ---------------- WebSocket Backend Integration ----------------
+const ws = new WebSocket("ws://localhost:8000/ws");
+const consoleScreen = document.getElementById('consoleScreen');
+
+ws.onmessage = (event) => {
+    if(!systemOn) return;
+    const data = JSON.parse(event.data);
+    
+    // 1. Classification
+    document.getElementById('cnt-Car').textContent = data.counts.Car;
+    document.getElementById('cnt-Motorcycle').textContent = data.counts.Motorcycle;
+    document.getElementById('cnt-Bus').textContent = data.counts.Bus;
+    document.getElementById('cnt-Truck').textContent = data.counts.Truck;
+    document.getElementById('cnt-Person').textContent = data.counts.Person;
+    document.getElementById('cnt-TrafficSign').textContent = data.counts.TrafficSign;
+    document.getElementById('totalCount').textContent = data.total_count;
+    document.getElementById('pedCount').textContent = data.ped_timer;
+    
+    // 2. Camera Stats
+    document.getElementById('camFps').textContent = `FPS: ${data.camera.fps}`;
+    document.getElementById('camConf').textContent = `CONF: ${data.camera.confidence*100}%`;
+    document.getElementById('camInf').textContent = `INF: ${data.camera.inference_time}ms`;
+
+    // 3. Stats & Gauges
+    let total = data.total_count;
+    let cls = total < 55 ? {l:'LOW', c:'low'} : (total < 85 ? {l:'MEDIUM', c:'medium'} : {l:'HIGH', c:'high'});
+    const chip = document.getElementById('roadStatusChip');
+    chip.textContent = cls.l; chip.className = 'status-led ' + cls.c;
+    
+    document.getElementById('waitVal').textContent = data.wait_time;
+    setGauge(gWait, 100-((data.wait_time-15)/(95-15)*100));
+    
+    document.getElementById('fuelVal').textContent = data.fuel_saved;
+    setGauge(gFuel, Math.min(100, data.fuel_saved/4*100));
+    
+    document.getElementById('co2Val').textContent = data.co2_cut;
+    setGauge(gCo2, data.co2_cut/32*100);
+    
+    document.getElementById('laneVal').textContent = data.lane_load;
+    setGauge(gLane, data.lane_load);
+    
+    // 4. Predict
+    predictText.textContent = data.predict_pct + '%';
+    predictArc.setAttribute('stroke-dashoffset', 317-(317*data.predict_pct/100));
+    const pColor = data.predict_pct>70?'#e6483f':data.predict_pct>40?'#ffb020':'#37c47a';
+    predictArc.setAttribute('stroke', pColor);
+    document.getElementById('predictMins').textContent = data.predict_mins;
+    
+    // 5. Signals
+    data.lanes.forEach(l => {
+        const id = l.name.replace(' ','');
+        document.getElementById(`time-${id}`).textContent = l.time + 's';
+        const filledSegs = Math.round((l.time/120*2.5)*SEGMENTS);
+        for(let s=0;s<SEGMENTS;s++){
+            const seg = document.getElementById(`seg-${id}-${s}`);
+            seg.className = 'led-seg' + (s<filledSegs ? ' filled ' + l.state : '');
+        }
+        setArmLight(l.arm, l.state);
+    });
+
+    // 6. Emergency Banner
+    const banner = document.getElementById('emergencyBanner');
+    if(data.emergency.active){
+        banner.classList.add('show');
+        document.getElementById('emergencyTxt').innerHTML = `${data.emergency.message} <small>Emergency Corridor Active</small>`;
+    } else {
+        banner.classList.remove('show');
+    }
+
+    // 7. Signboard
+    const sb = document.getElementById('signboardPanel');
+    sb.innerHTML = data.signboard.map((line, i) => {
+        if(i === data.signboard.length - 1) return `<div class="sb-line dim">${line}<span class="blink">_</span></div>`;
+        return `<div class="sb-line">${line}</div>`;
+    }).join('');
+
+    // 8. Weather
+    document.getElementById('weatherIcon').textContent = data.weather.icon;
+    document.getElementById('weatherTemp').textContent = data.weather.temp;
+    document.getElementById('weatherCond').textContent = data.weather.cond;
+    document.getElementById('weatherNote').textContent = data.weather.note;
+
+    // 9. Charts
+    vehicleChart.data.datasets[0].data = data.chart_vehicles;
+    vehicleChart.update();
+    congestionChart.data.datasets[0].data = data.chart_congestion;
+    congestionChart.data.datasets[0].backgroundColor = data.chart_congestion.map(v=>v>70?'#e6483f':v>40?'#ffb020':'#37c47a');
+    congestionChart.update();
+
+    // 10. Console Logs
+    consoleScreen.innerHTML = data.logs.map(line => `<div class="console-line">${line}</div>`).join('');
+};
+
+ws.onopen = () => console.log("WebSocket connected to AI engine");
+ws.onerror = (e) => console.error("WebSocket error", e);
+</script>
+</body>
+</html>
