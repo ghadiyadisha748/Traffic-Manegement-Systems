@@ -1,255 +1,500 @@
 <div align="center">
 
-# 🚦 Smart Traffic Management System
+# 🚦 SmartTraffic AI
+### *AI-Powered Adaptive Traffic Management & Emission Reduction System*
 
-### AI-Powered Adaptive Traffic Control using Computer Vision
-
-Monitor traffic in real time, detect and track vehicles, analyze congestion, and optimize traffic signals using **YOLOv8**, **FastAPI**, and **OpenCV**.
+### 🏆 Developed for the **Maverick AI Challenge 2026**
 
 <p align="center">
-<img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white">
-<img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white">
-<img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white">
-<img src="https://img.shields.io/badge/YOLOv8-Ultralytics-red?style=for-the-badge">
-<img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge">
-<img src="https://img.shields.io/github/license/ghadiyadisha748/Traffic-Manegement-Systems?style=for-the-badge">
+
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-EF4444?style=for-the-badge)
+![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)
+![WebSocket](https://img.shields.io/badge/WebSocket-Live-success?style=for-the-badge)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-ORM-orange?style=for-the-badge)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+
 </p>
 
-**Real-Time Vehicle Detection • Intelligent Signal Optimization • Live Dashboard • Traffic Analytics**
+### 🚗 Intelligent Traffic Monitoring • 🚦 Adaptive Signal Control • 🌱 Emission Reduction • 📊 Smart Analytics
+
+---
+
+### *Transforming traditional traffic intersections into intelligent AI-powered systems capable of reducing congestion, minimizing emissions, and improving urban mobility through real-time computer vision.*
 
 </div>
 
 ---
 
-# 📸 Project Preview
+# 📑 Table of Contents
 
-## 🖥️ Main Dashboard
+- 📖 Overview
+- 🚀 Problem Statement
+- 💡 Our Solution
+- ✨ Key Features
+- 📸 Project Showcase
+- 🧠 AI Processing Pipeline
+- 🏗️ System Architecture
+- ⚙️ Technology Stack
+- 📂 Project Structure
+- 🚀 Installation
+- ▶️ Running the Project
+- 📡 API Reference
+- 📊 Dashboard Overview
+- ⚡ Performance
+- 🌱 Environmental Impact
+- 🛣️ Future Enhancements
+- 👨‍💻 Contributors
+- 📄 License
+
+---
+
+# 📖 Overview
+
+**SmartTraffic AI** is an intelligent traffic management platform designed to optimize urban intersections using Artificial Intelligence and Computer Vision.
+
+Built for the **Maverick AI Challenge**, the system analyzes live traffic footage, detects and tracks vehicles, estimates congestion, predicts waiting times, and dynamically recommends traffic signal durations to improve traffic flow while reducing fuel consumption and carbon emissions.
+
+Unlike conventional traffic systems that rely on fixed timers, SmartTraffic AI continuously adapts to real-world traffic conditions, enabling faster vehicle movement, reduced idle time, and smarter intersection management.
+
+The platform combines **YOLOv8**, **ByteTrack**, **OpenCV**, **FastAPI**, **WebSockets**, and **SQLAlchemy** to provide a modern real-time traffic intelligence solution with a premium monitoring dashboard.
+
+---
+
+# 🚀 Maverick AI Challenge Problem Statement
+
+### Smart Traffic & Emission Reduction
+
+Urban intersections continue to rely on static traffic light schedules that fail to adapt to fluctuating traffic conditions.
+
+This leads to:
+
+- 🚗 Long vehicle queues
+- ⏳ Increased waiting time
+- ⛽ Excess fuel consumption
+- 🌍 Higher CO₂ emissions
+- 🚦 Traffic congestion
+- 🚑 Delays for emergency vehicles
+
+The challenge is to design an AI-powered traffic management system capable of monitoring intersections in real time and intelligently optimizing traffic flow while minimizing environmental impact.
+
+---
+
+# 💡 Our Solution
+
+SmartTraffic AI leverages modern Computer Vision and Artificial Intelligence to transform ordinary CCTV cameras into intelligent traffic sensors.
+
+Instead of using fixed signal timings, the system continuously analyzes vehicle movement, estimates lane congestion, detects queues, prioritizes emergency vehicles, and recommends adaptive traffic signal durations.
+
+The complete system operates in real time through a FastAPI backend connected to a modern SmartTraffic OS dashboard via WebSockets.
+
+### Core Workflow
+
+```
+Camera Feed
+      │
+      ▼
+OpenCV Video Processing
+      │
+      ▼
+YOLOv8 Vehicle Detection
+      │
+      ▼
+ByteTrack Object Tracking
+      │
+      ▼
+ROI Lane Assignment
+      │
+      ▼
+Traffic Analysis
+      │
+      ▼
+Adaptive Signal Controller
+      │
+      ▼
+Database + Analytics
+      │
+      ▼
+FastAPI WebSocket Server
+      │
+      ▼
+SmartTraffic Dashboard
+```
+
+---
+
+# ✨ Key Features
+
+## 🤖 AI & Computer Vision
+
+- Real-time vehicle detection using YOLOv8
+- Multi-object tracking with ByteTrack
+- ROI-based lane assignment using Shapely
+- Lane-wise traffic density estimation
+- Queue detection
+- Vehicle counting
+- Live confidence scoring
+- Motion tracking
+- FPS-independent processing
+- Intelligent congestion estimation
+
+---
+
+## 🚦 Traffic Intelligence
+
+- Adaptive traffic signal timing
+- Dynamic green-light allocation
+- Smart lane prioritization
+- Queue-based optimization
+- Emergency vehicle priority
+- Pedestrian crossing management
+- Live signal countdown
+- Traffic prediction
+- Intelligent congestion alerts
+
+---
+
+## 📊 Analytics
+
+- Live vehicle statistics
+- Vehicle type classification
+- Historical traffic history
+- Wait-time estimation
+- Congestion prediction
+- Fuel saving estimation
+- Carbon emission reduction analysis
+- Traffic trend visualization
+- System performance monitoring
+
+---
+
+## 🌐 Backend
+
+- FastAPI REST APIs
+- Native WebSocket communication
+- MJPEG live video streaming
+- SQLAlchemy ORM
+- Alembic migrations
+- SQLite support
+- PostgreSQL support
+- Environment-based configuration
+- Modular architecture
+
+---
+
+## 💻 Dashboard
+
+- Premium SmartTraffic OS Interface
+- Real-time AI camera feed
+- Traffic signal visualization
+- Live radar animation
+- Analytics dashboard
+- Dark / Light mode
+- Event logs
+- Manual signal override
+- Responsive design
+- Real-time charts
+
+---
+
+# 📸 Project Showcase
+
+## 🖥️ SmartTraffic Dashboard
 
 <p align="center">
 <img src="docs/dashboard-main.png" width="100%">
 </p>
 
-The dashboard provides a live AI camera feed, traffic signal visualization, congestion statistics, vehicle classification, signal timing, and manual control for the intersection.
+The primary dashboard provides a centralized command center for monitoring live traffic conditions, AI detections, signal status, congestion levels, environmental impact, and operational controls in real time.
 
 ---
 
-## 📊 Analytics Dashboard
+## 📈 Analytics Dashboard
 
 <p align="center">
 <img src="docs/dashboard-analytics.png" width="100%">
 </p>
 
-Historical analytics including traffic trends, congestion probability, wait time estimation, and system event logging.
-
-
----
-
-# 💡 Why This Project?
-
-Conventional traffic lights rely on **fixed timing schedules**, regardless of the actual traffic volume. During low traffic periods, vehicles wait unnecessarily, while during heavy traffic, fixed cycles often cause severe congestion.
-
-The **Smart Traffic Management System** addresses this problem by using **computer vision** to monitor intersections in real time, estimate traffic density, and recommend adaptive traffic signal timings.
-
-The goal is to reduce:
-
-- 🚗 Vehicle waiting time
-- ⛽ Fuel consumption
-- 🌍 Carbon emissions
-- 🚦 Traffic congestion
+The analytics panel visualizes historical traffic trends, congestion patterns, vehicle classifications, average waiting times, and overall system performance to assist in traffic planning and decision-making.
 
 ---
 
-# ✨ Features
+## 🎯 Key Objectives
 
-## 🚗 Real-Time Vehicle Detection
+✔ Reduce Traffic Congestion
 
-- YOLOv8 object detection
-- Bounding box visualization
-- Confidence scores
-- Multi-class detection
+✔ Minimize Vehicle Waiting Time
 
-Supported classes:
+✔ Reduce Fuel Consumption
 
-- Car
-- Bus
-- Truck
-- Motorcycle
-- Person
-- Traffic Sign
+✔ Lower Carbon Emissions
+
+✔ Improve Emergency Response
+
+✔ Enable Intelligent Traffic Monitoring
+
+✔ Support Smart City Infrastructure
 
 ---
 
-## 🎯 Multi-Object Tracking
+# 🧠 AI Processing Pipeline
 
-- ByteTrack tracking
-- Persistent vehicle IDs
-- Queue detection
-- Lane-wise counting
-- Vehicle history
+Every video frame passes through a carefully designed AI pipeline that transforms raw camera footage into actionable traffic intelligence.
 
----
-
-## 🚦 Intelligent Signal Optimization
-
-- Adaptive green-light allocation
-- Lane congestion analysis
-- Dynamic signal cycles
-- Queue-based timing recommendations
-- Manual override mode
-
----
-
-## 📊 Traffic Analytics
-
-- Vehicle counts
-- Lane occupancy
-- Congestion prediction
-- Wait time estimation
-- Fuel savings estimation
-- CO₂ reduction estimation
-
----
-
-## 📹 Live Streaming
-
-- MJPEG camera stream
-- Browser-based viewing
-- Low-latency updates
-- WebSocket synchronization
-
----
-
-## 📈 Interactive Dashboard
-
-- Live AI camera feed
-- Junction visualization
-- Signal timer
-- Vehicle classification
-- Congestion gauge
-- Event logs
-- Ambient conditions
-- Manual controls
+```
+📹 Camera Input
+        │
+        ▼
+🎞 OpenCV Frame Capture
+        │
+        ▼
+🧠 YOLOv8 Object Detection
+        │
+        ▼
+🚗 ByteTrack Vehicle Tracking
+        │
+        ▼
+📍 ROI Lane Assignment
+        │
+        ▼
+📊 Queue & Density Analysis
+        │
+        ▼
+🚦 Adaptive Signal Optimization
+        │
+        ▼
+💾 Database Logging
+        │
+        ▼
+📡 FastAPI + WebSocket
+        │
+        ▼
+🖥️ SmartTraffic Dashboard
+```
 
 ---
 
 # 🏗️ System Architecture
 
-```text
-                   Camera / CCTV
-                         │
-                         ▼
-                 OpenCV Video Capture
-                         │
-                         ▼
-               YOLOv8 Object Detection
-                         │
-                         ▼
-              ByteTrack Object Tracking
-                         │
-                         ▼
-            Shapely Lane Assignment (ROI)
-                         │
-              ┌──────────┴──────────┐
-              ▼                     ▼
-      Traffic Statistics      Signal Logic
-              │                     │
-              └──────────┬──────────┘
-                         ▼
-                  FastAPI Backend
-                         │
-          ┌──────────────┴──────────────┐
-          ▼                             ▼
-     SQLite / PostgreSQL          WebSocket API
-                                        │
-                                        ▼
-                               Live Dashboard
+SmartTraffic AI follows a modular architecture where each component is responsible for a specific stage of the traffic analysis pipeline. This design improves maintainability, scalability, and real-time performance while allowing each module to operate independently.
+
+```mermaid
+flowchart TD
+
+A[📹 Camera / CCTV Feed]
+
+A --> B[🎞 OpenCV Video Capture]
+
+B --> C[🧠 YOLOv8 Vehicle Detection]
+
+C --> D[🚗 ByteTrack Object Tracking]
+
+D --> E[📍 ROI Lane Assignment]
+
+E --> F[📊 Queue & Density Analysis]
+
+F --> G[🚦 Adaptive Traffic Controller]
+
+G --> H[(SQLite / PostgreSQL)]
+
+G --> I[⚡ FastAPI Backend]
+
+I --> J[📡 WebSocket Server]
+
+I --> K[📹 MJPEG Live Stream]
+
+J --> L[🖥️ SmartTraffic Dashboard]
+
+K --> L
+
+H --> L
 ```
 
 ---
 
-# ⚙️ Tech Stack
+# 🧠 Intelligent Traffic Analysis
 
-## Backend
+Rather than simply detecting vehicles, SmartTraffic AI continuously interprets traffic behavior to make intelligent traffic management decisions.
 
-| Layer | Technology |
-|--------|------------|
-| Framework | FastAPI |
-| Server | Uvicorn |
-| Language | Python 3.10+ |
-| Real-Time | Native WebSockets |
-| Streaming | MJPEG (`StreamingResponse`) |
+## 🚗 Vehicle Detection
+
+The system uses **YOLOv8** to detect multiple classes of road users with high speed and accuracy.
+
+Supported classes include:
+
+- 🚗 Car
+- 🚌 Bus
+- 🚚 Truck
+- 🏍 Motorcycle
+- 🚶 Person
+- 🚦 Traffic Signs
 
 ---
 
-## AI / Computer Vision
+## 🎯 Multi-Object Tracking
 
-| Layer | Technology |
-|--------|------------|
-| Detection | YOLOv8n (Ultralytics) |
-| Tracking | ByteTrack |
-| Video Processing | OpenCV |
-| ROI Geometry | Shapely |
+Using **ByteTrack**, every detected vehicle receives a persistent tracking ID.
+
+This allows the system to:
+
+- Track vehicle movement
+- Avoid duplicate counting
+- Estimate waiting time
+- Monitor queue formation
+- Calculate traffic density
+- Analyze traffic flow
+
+---
+
+## 📍 ROI-Based Lane Assignment
+
+Instead of relying only on image coordinates, SmartTraffic AI divides the road into predefined Regions of Interest (ROIs) using **Shapely polygons**.
+
+This enables:
+
+- Accurate lane detection
+- Lane-wise vehicle counting
+- Queue estimation
+- Congestion analysis
+- Adaptive signal allocation
+
+---
+
+## 🚦 Adaptive Signal Optimization
+
+Traditional traffic lights use fixed signal durations.
+
+SmartTraffic AI dynamically adjusts signal timing based on:
+
+- Current lane congestion
+- Queue length
+- Waiting time
+- Vehicle density
+- Emergency vehicle detection
+
+The lane with the highest traffic demand is automatically prioritized, resulting in smoother traffic flow and shorter waiting times.
+
+---
+
+## 🚑 Emergency Vehicle Priority
+
+Emergency response vehicles require uninterrupted movement.
+
+Whenever an emergency vehicle is detected, the system can:
+
+- Prioritize the affected lane
+- Allocate immediate green signals
+- Reduce response time
+- Resume normal traffic flow after clearance
+
+---
+
+## 📊 Traffic Analytics
+
+The system continuously generates meaningful traffic insights including:
+
+- Total vehicle count
+- Vehicle classification
+- Lane occupancy
+- Queue length
+- Average waiting time
+- Congestion probability
+- Fuel savings
+- CO₂ emission reduction
+- System performance statistics
+
+These analytics assist authorities in making data-driven traffic management decisions.
+
+---
+
+# ⚙️ Technology Stack
+
+## Backend
+
+| Component | Technology |
+|------------|------------|
+| Framework | FastAPI |
+| Language | Python 3.10+ |
+| Server | Uvicorn |
+| Real-Time Communication | Native WebSockets |
+| Video Streaming | MJPEG StreamingResponse |
+| Configuration | Pydantic |
+
+---
+
+## Artificial Intelligence
+
+| Component | Technology |
+|------------|------------|
+| Object Detection | YOLOv8 (Ultralytics) |
+| Object Tracking | ByteTrack |
+| Image Processing | OpenCV |
+| Lane Geometry | Shapely |
 
 ---
 
 ## Database
 
-| Layer | Technology |
-|--------|------------|
+| Component | Technology |
+|------------|------------|
 | ORM | SQLAlchemy |
-| Development | SQLite |
-| Production | PostgreSQL |
-| Migration | Alembic |
+| Development Database | SQLite |
+| Production Database | PostgreSQL |
+| Migration Tool | Alembic |
 
 ---
 
 ## Frontend
 
-| Layer | Technology |
-|--------|------------|
-| HTML | HTML5 |
+| Component | Technology |
+|------------|------------|
+| Structure | HTML5 |
 | Styling | CSS3 |
 | Logic | Vanilla JavaScript |
 | Charts | Chart.js |
-| Fonts | Google Fonts |
-| Communication | Native WebSocket API |
+| Communication | Native WebSockets |
 
 ---
 
-## Utilities
+## Additional Libraries
 
-| Package | Purpose |
-|----------|----------|
-| pydantic | Validation |
-| python-dotenv | Environment variables |
-| lapx | ByteTrack assignment |
-| psycopg2-binary | PostgreSQL |
-| Alembic | Database migrations |
+| Library | Purpose |
+|-----------|---------|
+| Pydantic | Data Validation |
+| SQLAlchemy | Database ORM |
+| Alembic | Database Migration |
+| OpenCV | Video Processing |
+| Ultralytics | YOLOv8 Framework |
+| Shapely | ROI Geometry |
+| LAPX | ByteTrack Assignment |
+| python-dotenv | Environment Variables |
 
 ---
 
-# 📁 Project Structure
+# 📂 Project Structure
 
 ```text
-Traffic-Manegement-Systems/
+SmartTraffic-AI/
 │
 ├── backend/
 │   ├── ai_engine.py
-│   ├── config.py
-│   ├── database.py
-│   ├── db_models.py
 │   ├── traffic_logic.py
 │   ├── websocket_manager.py
+│   ├── database.py
+│   ├── db_models.py
 │   ├── models.py
+│   ├── config.py
 │   ├── main.py
-│   ├── alembic/
 │   ├── requirements.txt
-│   └── test_video.mp4
+│   └── alembic/
 │
 ├── frontend/
 │   ├── index.html
 │   ├── style.css
-│   └── app.js
+│   ├── app.js
+│   └── assets/
 │
 ├── docs/
 │   ├── dashboard-main.png
@@ -261,6 +506,7 @@ Traffic-Manegement-Systems/
 ├── run_frontend.bat
 ├── setup.bat
 ├── start_project.bat
+│
 └── README.md
 ```
 
@@ -270,8 +516,12 @@ Traffic-Manegement-Systems/
 
 ## Prerequisites
 
-- Python 3.10+
+Before running the project, ensure the following are installed:
+
+- Python 3.10 or later
 - pip
+- Git
+- Modern web browser
 
 ---
 
@@ -283,6 +533,8 @@ Clone the repository
 git clone https://github.com/ghadiyadisha748/Traffic-Manegement-Systems.git
 ```
 
+Navigate to the project directory
+
 ```bash
 cd Traffic-Manegement-Systems
 ```
@@ -293,21 +545,21 @@ Create a virtual environment
 python -m venv venv
 ```
 
-Activate
+Activate the virtual environment
 
-Windows
+### Windows
 
 ```bash
 venv\Scripts\activate
 ```
 
-Linux/macOS
+### Linux / macOS
 
 ```bash
 source venv/bin/activate
 ```
 
-Install dependencies
+Install project dependencies
 
 ```bash
 pip install -r backend/requirements.txt
@@ -317,7 +569,7 @@ pip install -r backend/requirements.txt
 
 # ▶️ Running the Project
 
-Run backend
+### Start Backend
 
 ```bash
 run_backend.bat
@@ -329,49 +581,58 @@ or
 uvicorn backend.main:app --reload
 ```
 
-Run frontend
+---
+
+### Start Frontend
 
 ```bash
 run_frontend.bat
 ```
 
-or open
+or simply open
 
-```
+```text
 frontend/index.html
 ```
 
-Run everything
+---
+
+### Start Complete System
 
 ```bash
 start_project.bat
 ```
 
+Once the backend starts successfully, open your browser and access the SmartTraffic Dashboard.
+
 ---
 
-# 📡 API Endpoints
+# 📡 API Reference
 
 | Method | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/` | Home |
-| GET | `/video_feed` | Live MJPEG stream |
-| GET | `/stats` | Traffic statistics |
-| GET | `/health` | Health check |
-| WS | `/ws` | Live dashboard updates |
+|----------|-----------|-------------|
+| GET | `/` | Home Route |
+| GET | `/video_feed` | Live AI Video Stream |
+| GET | `/api/dashboard` | Dashboard Information |
+| GET | `/api/history` | Historical Traffic Data |
+| GET | `/api/system` | System Health |
+| GET | `/api/intersections` | Intersection Details |
+| GET | `/api/signals` | Signal Information |
+| WebSocket | `/ws` | Live Dashboard Updates |
 
 ---
 
 # 📖 API Documentation
 
-Once the server is running:
+Interactive API documentation is automatically generated by FastAPI.
 
-Swagger UI
+### Swagger UI
 
 ```
 http://localhost:8000/docs
 ```
 
-ReDoc
+### ReDoc
 
 ```
 http://localhost:8000/redoc
@@ -379,94 +640,98 @@ http://localhost:8000/redoc
 
 ---
 
-# 🔄 AI Processing Pipeline
+# 🖥️ Dashboard Overview
 
-```text
-Video Input
-      │
-      ▼
-OpenCV Frame Capture
-      │
-      ▼
-YOLOv8 Detection
-      │
-      ▼
-ByteTrack Tracking
-      │
-      ▼
-Lane Assignment
-      │
-      ▼
-Vehicle Counting
-      │
-      ▼
-Traffic Analysis
-      │
-      ▼
-Signal Optimization
-      │
-      ▼
-FastAPI + WebSocket
-      │
-      ▼
-Dashboard
-```
+The SmartTraffic dashboard acts as a centralized command center for monitoring and managing traffic operations in real time.
 
----
+### Live Monitoring
 
-# 📊 Dashboard Metrics
+- AI Camera Feed
+- Bounding Box Visualization
+- Vehicle Tracking
+- FPS Monitoring
 
-- 🚗 Total Vehicles
-- 🚛 Vehicle Classification
-- 🚦 Lane Occupancy
-- ⏳ Average Wait Time
-- 🌍 CO₂ Reduction
-- ⛽ Fuel Savings
-- 📈 Congestion Probability
-- 🚥 Signal Cycle
-- 🛣 Diversion Advisory
-- 📝 System Event Log
+### Traffic Control
+
+- Signal Status
+- Lane Prioritization
+- Countdown Timer
+- Manual Override
+
+### Analytics
+
+- Traffic Density
+- Congestion Trends
+- Vehicle Distribution
+- Historical Insights
+
+### Environmental Metrics
+
+- Estimated Fuel Savings
+- CO₂ Reduction
+- Average Waiting Time
+- Traffic Efficiency
+
+### System Health
+
+- Backend Status
+- AI Engine Status
+- WebSocket Connectivity
+- Processing Latency
 
 ---
+---
 
-# ⚡ Performance
+# ⚡ Performance Summary
 
-| Metric | Value |
-|---------|--------|
-| Detection Model | YOLOv8n |
+The current implementation is designed to process recorded or live video streams efficiently while providing real-time traffic insights.
+
+| Feature | Implementation |
+|---------|----------------|
+| Object Detection | YOLOv8 |
 | Object Tracking | ByteTrack |
-| Streaming | MJPEG |
-| Communication | WebSockets |
-| Supported Classes | 6 |
+| Backend Framework | FastAPI |
+| Video Processing | OpenCV |
 | Database | SQLite / PostgreSQL |
-| API Framework | FastAPI |
+| Live Updates | WebSockets |
+| Video Streaming | MJPEG |
+| Dashboard | HTML, CSS & JavaScript |
+
+The modular architecture allows individual components to be improved or replaced without affecting the overall system.
 
 ---
 
 # 🌱 Environmental Impact
 
-Adaptive traffic signal control reduces idle time at intersections, helping to:
+SmartTraffic AI focuses on improving traffic flow by adapting signal timings according to current traffic conditions.
 
-- Lower fuel consumption
-- Reduce greenhouse gas emissions
-- Improve traffic flow
-- Minimize unnecessary vehicle waiting
-- Increase road efficiency
+Potential benefits include:
+
+- 🚦 Reduced traffic congestion
+- ⏳ Lower vehicle waiting time
+- ⛽ Reduced fuel consumption due to less idling
+- 🌍 Lower carbon emissions
+- 🚑 Improved traffic movement during peak hours
+
+While the current system demonstrates these concepts using AI-based traffic analysis, future deployment with real-world traffic infrastructure could further enhance these benefits.
 
 ---
 
-# 🛣️ Future Enhancements
+# 🔮 Future Scope
 
-- [ ] Multi-intersection coordination
-- [ ] Emergency vehicle priority
-- [ ] License plate recognition (ANPR)
-- [ ] Weather-aware signal optimization
-- [ ] Reinforcement Learning based signal control
-- [ ] Docker support
-- [ ] Kubernetes deployment
-- [ ] Cloud deployment
-- [ ] Mobile dashboard
-- [ ] Historical analytics
+This project establishes the foundation for an intelligent traffic management system. Future improvements may include:
+
+- Multi-intersection traffic coordination
+- Emergency vehicle detection and automatic signal priority
+- Number plate recognition (ANPR)
+- Weather-aware traffic optimization
+- Reinforcement Learning based signal control
+- Historical traffic prediction using AI
+- Cloud deployment for remote monitoring
+- Docker-based deployment
+- Mobile dashboard for traffic monitoring
+- Integration with Smart City infrastructure
+- Enhanced analytics and reporting
 
 ---
 
@@ -474,59 +739,78 @@ Adaptive traffic signal control reduces idle time at intersections, helping to:
 
 Contributions are welcome.
 
-1. Fork the repository
-2. Create a feature branch
+If you would like to improve this project:
+
+1. Fork the repository.
+2. Create a feature branch.
 
 ```bash
 git checkout -b feature/new-feature
 ```
 
-3. Commit your changes
+3. Commit your changes.
 
 ```bash
 git commit -m "Add new feature"
 ```
 
-4. Push
+4. Push the branch.
 
 ```bash
 git push origin feature/new-feature
 ```
 
-5. Open a Pull Request
+5. Open a Pull Request.
+
+---
+
+# 👨‍💻 Authors
+
+<div align="center">
+
+**Anvi Shah**  
+**Heshvi Shah**  
+**Disha Ghadiya**  
+**Anshika Badala**  
+**Liza Soni**
+
+</div>
+
+---
+
+# 🙏 Acknowledgements
+
+This project was developed as part of the **Maverick AI Challenge 2026**.
+
+We sincerely thank the developers and communities behind the open-source technologies that made this project possible.
+
+- Ultralytics (YOLOv8)
+- FastAPI
+- OpenCV
+- SQLAlchemy
+- ByteTrack
+- Shapely
+- Chart.js
 
 ---
 
 # 📄 License
 
-This project is open source and intended for educational and research purposes.
+This project is intended for **educational, research, and hackathon purposes**.
 
----
-
-# 👨‍💻 Author
-
-**Anvi Shah** |
-**Heshvi Shah** |
-**Anshika Badala** |
-**Disha Ghadiya** |
-**Liza Soni**
-
-GitHub
-
-https://github.com/ghadiyadisha748
-
----
-
-# 🏷️ Topics
-
-`computer-vision` • `yolov8` • `fastapi` • `opencv` • `websocket` • `traffic-management` • `smart-city` • `artificial-intelligence` • `object-tracking` • `dashboard`
+Feel free to use and build upon this project with appropriate attribution to the authors.
 
 ---
 
 <div align="center">
 
-### ⭐ If you found this project useful, please consider giving it a star!
+## ⭐ If you found this project interesting, consider giving it a star!
 
-**Made with ❤️ using Python, FastAPI, OpenCV & YOLOv8**
+### 🚦 SmartTraffic AI
+#### *AI-Powered Adaptive Traffic Management & Emission Reduction System*
+
+**Built with Python • FastAPI • YOLOv8 • OpenCV • ByteTrack**
+
+**Developed for the Maverick AI Challenge 2026**
 
 </div>
