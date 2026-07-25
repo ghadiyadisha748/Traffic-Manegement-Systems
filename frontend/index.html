@@ -5,9 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="Junction Console — AI-Powered Smart Traffic Management System with YOLOv8 Detection">
-  <title>Junction Console — AI Traffic Control</title>
+    content="SmartTraffic OS — Control Room Dashboard for AI-Powered Traffic Management with YOLOv8 Detection">
+  <title>SmartTraffic OS — Control Room Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
   <script>
     (function() {
@@ -25,245 +27,440 @@
 
 <body>
 
-  <div class="wrap">
-
-    <!-- ═══ HEADER ═══ -->
-    <header class="card hdr" role="banner">
-      <div class="brand">
-        <div class="power-toggle on" id="powerToggle" role="switch" aria-checked="true" aria-label="System power"
-          tabindex="0">
-          <div class="knob"></div>
-        </div>
-        <div class="brand-text">
-          <div class="name">Junction Console</div>
-          <div class="sub">Predictive Signal &amp; Emission Control · YOLOv8 AI</div>
-        </div>
+  <!-- ============================= TOP NAV ============================= -->
+  <nav class="top-nav" role="banner">
+    <div class="nav-left">
+      <div class="nav-logo-mark"><i class="fa-solid fa-car-tunnel"></i></div>
+      <span class="nav-title">SmartTraffic<span> OS</span></span>
+    </div>
+    <div class="nav-center">
+      <span id="clock" class="time-display" aria-label="Current time">00:00:00</span>
+      <span id="current-date" class="date-display">2026-07-25</span>
+    </div>
+    <div class="nav-right">
+      <div class="status-indicator">
+        <div class="signal-beacon state-green" id="backend-beacon"><i></i><i></i><i></i></div>
+        <span id="backend-status-text">Systems Nominal</span>
+        <span class="led-dot green" id="ledDot" aria-hidden="true" style="margin-left:6px;"></span>
       </div>
-      <div class="header-right">
-        <div class="led-pill" aria-label="Camera status">
-          <span class="led-dot" id="ledDot" aria-hidden="true"></span>
-          CAM 04 · RING ROAD 4B
-        </div>
-        <div class="clock" id="clock" aria-label="Current time">--:--:--</div>
-      </div>
-    </header>
-
-    <!-- ═══ EMERGENCY BANNER ═══ -->
-    <div class="card emergency" id="emergencyBanner" role="alert" aria-live="assertive">
-      <div class="emg-icon" aria-hidden="true">▲</div>
-      <div class="txt" id="emergencyTxt"><span id="emergencyMsg">Emergency vehicle detected — Road A green corridor
-          engaged</span>
-        <small id="emergencySub">Conflicting approaches held at RED · 20s override</small>
+      <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+      <div class="user-profile">
+        <img src="https://ui-avatars.com/api/?name=Admin&background=ffb020&color=0a0c0f&bold=true" alt="Admin profile" class="avatar">
+        <span>Admin Control</span>
       </div>
     </div>
+  </nav>
+  <div class="lane-divider" style="position:fixed;top:64px;left:0;right:0;z-index:999;"></div>
 
-    <!-- ═══ ROW 1: Intersection | Camera | Classification ═══ -->
-    <div class="grid-top">
+  <!-- ============================= MAIN APP CONTAINER ============================= -->
+  <div class="app-container">
 
-      <!-- Intersection Radar -->
-      <div class="card radar-chassis" aria-label="4-way intersection signal status">
-        <div class="radar-top">
-          <h2>4-Way Intersection</h2>
-          <div class="status-chip high" id="roadStatusChip" aria-live="polite">HIGH</div>
-        </div>
-        <div class="radar-stage">
-          <div class="radar-screen"><canvas id="radarCanvas" width="500" height="500" aria-hidden="true"></canvas></div>
-          <!-- Signal LEDs -->
-          <div class="bezel-led" id="sig-N" style="top:0;left:50%;transform:translate(-50%,0);"
-            aria-label="Road A North signal"><i></i><i></i><i></i></div>
-          <div class="arm-tag" style="top:36px;left:50%;transform:translateX(-50%);">ROAD A · N</div>
-          <div class="bezel-led" id="sig-S" style="bottom:0;left:50%;transform:translate(-50%,0);"
-            aria-label="Road C South signal"><i></i><i></i><i></i></div>
-          <div class="arm-tag" style="bottom:36px;left:50%;transform:translateX(-50%);">ROAD C · S</div>
-          <div class="bezel-led" id="sig-E" style="right:-4px;top:50%;transform:translate(0,-50%) rotate(90deg);"
-            aria-label="Road B East signal"><i></i><i></i><i></i></div>
-          <div class="arm-tag" style="right:36px;top:50%;transform:translateY(-50%);">ROAD B · E</div>
-          <div class="bezel-led" id="sig-W" style="left:-4px;top:50%;transform:translate(0,-50%) rotate(90deg);"
-            aria-label="Road D West signal"><i></i><i></i><i></i></div>
-          <div class="arm-tag" style="left:36px;top:50%;transform:translateY(-50%);">ROAD D · W</div>
-        </div>
-      </div>
+    <!-- ============================= SIDEBAR ============================= -->
+    <aside class="sidebar" role="navigation" aria-label="Main Navigation">
+      <div class="sidebar-label">Control Room</div>
+      <ul class="sidebar-menu">
+        <li class="menu-item active" data-view="dashboard" tabindex="0"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></li>
+        <li class="menu-item" data-view="monitoring" tabindex="0"><i class="fa-solid fa-video"></i><span>Monitoring</span></li>
+        <li class="menu-item" data-view="analytics" tabindex="0"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></li>
+        <li class="menu-item" data-view="admin" tabindex="0"><i class="fa-solid fa-server"></i><span>Operations</span></li>
+        <li class="menu-item" data-view="settings" tabindex="0"><i class="fa-solid fa-gear"></i><span>Settings</span></li>
+      </ul>
+    </aside>
 
-      <!-- Live AI Camera -->
-      <div class="card camera-chassis">
-        <div class="cam-title">Live AI Camera</div>
-        <div class="cam-sub">YOLOv8 Detection Feed</div>
-        <div class="camera-screen">
-          <img id="liveVideo" src="http://localhost:8000/video_feed"
-            alt="Live AI camera feed showing YOLOv8 vehicle detections">
-        </div>
-        <div class="camera-stats">
-          <span id="camFps">FPS: --</span>
-          <span id="camConf">CONF: --%</span>
-          <span id="camInf">INF: --ms</span>
+    <!-- ============================= MAIN CONTENT ============================= -->
+    <main class="main-content">
+
+      <!-- ═══ EMERGENCY BANNER (Global across views) ═══ -->
+      <div class="card emergency" id="emergencyBanner" role="alert" aria-live="assertive" style="margin-bottom: 22px;">
+        <div class="emg-icon" aria-hidden="true">▲</div>
+        <div class="txt" id="emergencyTxt">
+          <span id="emergencyMsg">Emergency vehicle detected — Road A green corridor engaged</span>
+          <small id="emergencySub">Conflicting approaches held at RED · 20s override</small>
         </div>
       </div>
 
-      <!-- Vehicle Classification -->
-      <div class="card manifest-chassis">
-        <h2>Classification</h2>
-        <div class="msub">YOLOv8 · Current Frame</div>
-        <div class="manifest-screen">
-          <div id="countRows" role="list" aria-label="Vehicle type counts"></div>
-          <div class="m-total">
-            <div>
-              <div class="num" id="totalCount" aria-live="polite">0</div>
-              <div class="lbl">TOTAL VEHICLES</div>
+      <!-- ============================= VIEW 1: DASHBOARD ============================= -->
+      <section id="view-dashboard" class="view-section active">
+        <header class="section-header">
+          <div>
+            <span class="section-eyebrow">Live Overview</span>
+            <h2>System Overview & KPIs</h2>
+          </div>
+        </header>
+
+        <!-- Summary KPI Cards -->
+        <div class="summary-cards">
+          <div class="card summary-card">
+            <div class="card-icon blue"><i class="fa-solid fa-stopwatch"></i></div>
+            <div class="card-info">
+              <h3>Avg. Wait Time</h3>
+              <p><span id="waitVal">--</span> <small style="font-size:12px;font-weight:500;">SEC</small></p>
+            </div>
+            <div id="gaugeWait" aria-hidden="true" style="display:none;"></div>
+          </div>
+
+          <div class="card summary-card">
+            <div class="card-icon green"><i class="fa-solid fa-car"></i></div>
+            <div class="card-info">
+              <h3>Total Vehicles</h3>
+              <p id="totalCount">0</p>
+            </div>
+          </div>
+
+          <div class="card summary-card">
+            <div class="card-icon orange"><i class="fa-solid fa-gas-pump"></i></div>
+            <div class="card-info">
+              <h3>Fuel Saved</h3>
+              <p><span id="fuelVal">--</span> <small style="font-size:12px;font-weight:500;">L/HR</small></p>
+            </div>
+            <div id="gaugeFuel" aria-hidden="true" style="display:none;"></div>
+          </div>
+
+          <div class="card summary-card">
+            <div class="card-icon purple"><i class="fa-solid fa-leaf"></i></div>
+            <div class="card-info">
+              <h3>CO₂ Cut</h3>
+              <p><span id="co2Val">--</span> <small style="font-size:12px;font-weight:500;">%</small></p>
+            </div>
+            <div id="gaugeCo2" aria-hidden="true" style="display:none;"></div>
+          </div>
+
+          <div class="card summary-card">
+            <div class="card-icon red"><i class="fa-solid fa-road"></i></div>
+            <div class="card-info">
+              <h3>Lane Load</h3>
+              <p><span id="laneVal">--</span> <small style="font-size:12px;font-weight:500;">%</small></p>
+            </div>
+            <div id="gaugeLane" aria-hidden="true" style="display:none;"></div>
+          </div>
+        </div>
+
+        <!-- Dashboard Main Grid: Traffic Trend & Intersection Radar -->
+        <div class="dashboard-grid">
+          <div class="card chart-chassis span-2 chart-container" style="padding: 20px;">
+            <h3>System Traffic Trend <span class="readout-tag" style="float:right;">60 MIN · LIVE</span></h3>
+            <div class="chart-screen" style="height: 300px; padding: 10px 0;">
+              <canvas id="vehicleChart" role="img" aria-label="Vehicle count over last 60 minutes"></canvas>
+            </div>
+          </div>
+
+          <div class="card radar-chassis" aria-label="4-way intersection signal status" style="padding: 20px;">
+            <div class="radar-top">
+              <h2>4-Way Intersection Radar</h2>
+              <div class="status-chip high" id="roadStatusChip" aria-live="polite">HIGH</div>
+            </div>
+            <div class="radar-stage" style="margin-top: 14px;">
+              <div class="radar-screen"><canvas id="radarCanvas" width="500" height="500" aria-hidden="true"></canvas></div>
+              <!-- Signal LEDs -->
+              <div class="bezel-led" id="sig-N" style="top:0;left:50%;transform:translate(-50%,0);" aria-label="Road A North signal"><i></i><i></i><i></i></div>
+              <div class="arm-tag" style="top:36px;left:50%;transform:translateX(-50%);">ROAD A · N</div>
+              <div class="bezel-led" id="sig-S" style="bottom:0;left:50%;transform:translate(-50%,0);" aria-label="Road C South signal"><i></i><i></i><i></i></div>
+              <div class="arm-tag" style="bottom:36px;left:50%;transform:translateX(-50%);">ROAD C · S</div>
+              <div class="bezel-led" id="sig-E" style="right:-4px;top:50%;transform:translate(0,-50%) rotate(90deg);" aria-label="Road B East signal"><i></i><i></i><i></i></div>
+              <div class="arm-tag" style="right:36px;top:50%;transform:translateY(-50%);">ROAD B · E</div>
+              <div class="bezel-led" id="sig-W" style="left:-4px;top:50%;transform:translate(0,-50%) rotate(90deg);" aria-label="Road D West signal"><i></i><i></i><i></i></div>
+              <div class="arm-tag" style="left:36px;top:50%;transform:translateY(-50%);">ROAD D · W</div>
             </div>
           </div>
         </div>
-        <div class="ped-row">
-          <div class="ped-label">PEDESTRIAN CROSSING · WALK</div>
-          <div class="ped-count" id="pedCount" aria-live="polite">--s</div>
-        </div>
-      </div>
 
-    </div><!-- /grid-top -->
-
-    <!-- ═══ STAT GAUGES ═══ -->
-    <div class="stat-strip" role="region" aria-label="Key performance metrics">
-      <div class="card gauge-chassis">
-        <div class="gauge-screen">
-          <div class="eyebrow">Avg. Wait</div>
-          <div id="gaugeWait" aria-hidden="true"></div>
-          <div class="gauge-val" id="waitVal" aria-live="polite">--</div>
-          <div class="gauge-unit">SECONDS</div>
-        </div>
-      </div>
-      <div class="card gauge-chassis">
-        <div class="gauge-screen">
-          <div class="eyebrow">Fuel Saved</div>
-          <div id="gaugeFuel" aria-hidden="true"></div>
-          <div class="gauge-val" id="fuelVal" aria-live="polite">--</div>
-          <div class="gauge-unit">L / HR</div>
-        </div>
-      </div>
-      <div class="card gauge-chassis">
-        <div class="gauge-screen">
-          <div class="eyebrow">CO&#8322; Cut</div>
-          <div id="gaugeCo2" aria-hidden="true"></div>
-          <div class="gauge-val" id="co2Val" aria-live="polite">--</div>
-          <div class="gauge-unit">PERCENT</div>
-        </div>
-      </div>
-      <div class="card gauge-chassis">
-        <div class="gauge-screen">
-          <div class="eyebrow">Lane Load</div>
-          <div id="gaugeLane" aria-hidden="true"></div>
-          <div class="gauge-val" id="laneVal" aria-live="polite">--</div>
-          <div class="gauge-unit">PERCENT</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ ROW 2: Forecast | Signal Cycle | Signboard ═══ -->
-    <div class="grid-mid">
-
-      <div class="card mid-chassis">
-        <h3>Congestion Forecast</h3>
-        <div class="mid-screen">
-          <div class="dial-wrap">
-            <div id="predictDial" aria-hidden="true"></div>
-            <div class="dial-text">Predicted delay: <b id="predictMins" aria-live="polite">--</b> min</div>
+        <!-- System Event Log Console -->
+        <div class="card console-chassis">
+          <h3>System Event Log & Live Backend Telemetry</h3>
+          <div class="console-screen" id="consoleScreen" role="log" aria-live="polite" aria-label="System event log">
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="card mid-chassis">
-        <h3>Signal Cycle — 120s</h3>
-        <div class="mid-screen">
-          <div id="signalRows" role="list" aria-label="Per-lane signal timing"></div>
-        </div>
-      </div>
-
-      <div class="card mid-chassis">
-        <h3>Diversion Advisory</h3>
-        <div class="mid-screen signboard" id="signboardPanel" aria-live="polite">
-          <div class="sb-line">&gt; SYSTEM INITIALIZING</div>
-          <div class="sb-line dim">&gt; AWAITING DATA<span class="blink">_</span></div>
-        </div>
-      </div>
-
-    </div><!-- /grid-mid -->
-
-    <!-- ═══ ROW 3: Weather | Manual Override ═══ -->
-    <div class="grid-lower">
-
-      <div class="card weather-chassis">
-        <h3>Ambient Conditions</h3>
-        <div class="weather-row">
-          <div class="weather-icon" id="weatherIcon" aria-hidden="true">☀️</div>
-          <div class="weather-info">
-            <div class="temp" id="weatherTemp">31°C</div>
-            <div class="cond" id="weatherCond">CLEAR · VISIBILITY HIGH</div>
+      <!-- ============================= VIEW 2: MONITORING ============================= -->
+      <section id="view-monitoring" class="view-section hidden">
+        <header class="section-header">
+          <div>
+            <span class="section-eyebrow">Camera Feed</span>
+            <h2>Live Road Monitoring & Classification</h2>
           </div>
-        </div>
-        <div class="weather-note" id="weatherNote">Detection confidence unaffected. No prediction adjustment applied.
-        </div>
-      </div>
+          <div class="header-actions">
+            <select id="road-selector" class="glass-select">
+              <option value="r1">Road A · North Approach (Live YOLOv8)</option>
+              <option value="r2">Road B · East Corridor</option>
+              <option value="r3">Road C · South Junction</option>
+              <option value="r4">Road D · West Expressway</option>
+            </select>
+            <button id="btn-refresh-roads" class="icon-btn" aria-label="Refresh feeds"><i class="fa-solid fa-rotate-right"></i></button>
+          </div>
+        </header>
 
-      <div class="card override-chassis">
-        <h3>Manual Override</h3>
-        <div class="switch-row">
-          <div class="switch-unit">
-            <div class="rocker on" id="swAuto" role="switch" aria-checked="true" aria-label="Auto mode" tabindex="0">
-              <div class="rknob"></div>
+        <div class="monitoring-grid">
+          <!-- Live AI Camera Stream Player -->
+          <div class="card camera-chassis video-container">
+            <div class="video-header">
+              <span class="live-badge"><span class="radar-sweep"></span> LIVE YOLOV8 DETECTION</span>
+              <span id="video-road-name">Road A · North Approach</span>
             </div>
-            <div class="switch-label">Auto Mode</div>
-          </div>
-          <div class="switch-unit">
-            <div class="rocker on" id="swCamera" role="switch" aria-checked="true" aria-label="Camera feed"
-              tabindex="0">
-              <div class="rknob"></div>
+            <div class="camera-screen" style="background:#050810; display:flex; align-items:center; justify-content:center; min-height: 380px;">
+              <img id="liveVideo" src="http://localhost:8000/video_feed" alt="Live AI camera feed showing YOLOv8 vehicle detections" style="width:100%; height:auto; object-fit:contain; display:block;">
             </div>
-            <div class="switch-label">Camera Feed</div>
-          </div>
-          <div class="switch-unit">
-            <div class="rocker" id="swNight" role="switch" aria-checked="false" aria-label="Night mode" tabindex="0">
-              <div class="rknob"></div>
+            <div class="camera-stats" style="padding: 12px 18px; border-top: 1px solid var(--glass-border); display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:12px;">
+              <span id="camFps">FPS: --</span>
+              <span id="camConf">CONF: --%</span>
+              <span id="camInf">INF: --ms</span>
             </div>
-            <div class="switch-label">Night Mode</div>
           </div>
-          <button class="emergency-btn" id="testEmergencyBtn" aria-label="Trigger emergency test mode">
-            ▲ Trigger Emergency Test
-          </button>
-        </div>
-      </div>
 
-    </div><!-- /grid-lower -->
+          <!-- Real-Time Classification Stats Panel -->
+          <div class="stats-panel">
+            <div class="card stat-box manifest-chassis">
+              <h4>Vehicle Breakdown (Current Frame)</h4>
+              <div id="countRows" role="list" aria-label="Vehicle type counts" style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;"></div>
+              <div class="ped-row" style="padding:10px; border-top:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">
+                <div class="ped-label" style="font-family:var(--font-mono); font-size:11px; color:var(--text-secondary);">PEDESTRIAN CROSSING · WALK</div>
+                <div class="ped-count" id="pedCount" aria-live="polite" style="font-family:var(--font-mono); font-weight:700; color:var(--cyan);">--s</div>
+              </div>
+            </div>
 
-    <!-- ═══ CHARTS ═══ -->
-    <div class="grid-charts">
-      <div class="card chart-chassis">
-        <h3>Vehicle Count — Last 60 Min</h3>
-        <div class="chart-screen">
-          <div class="chart-wrap">
-            <canvas id="vehicleChart" role="img" aria-label="Vehicle count over last 60 minutes"></canvas>
+            <div class="card stat-box weather-chassis">
+              <h4>Ambient Road Conditions</h4>
+              <div class="weather-row" style="display:flex; align-items:center; gap:16px; margin: 10px 0;">
+                <div class="weather-icon" id="weatherIcon" aria-hidden="true" style="font-size:32px;">☀️</div>
+                <div class="weather-info">
+                  <div class="temp" id="weatherTemp" style="font-family:var(--font-mono); font-size:24px; font-weight:700;">31°C</div>
+                  <div class="cond" id="weatherCond" style="font-size:12px; color:var(--text-secondary);">CLEAR · VISIBILITY HIGH</div>
+                </div>
+              </div>
+              <div class="weather-note" id="weatherNote" style="font-size:11.5px; color:var(--text-muted);">
+                Detection confidence unaffected. No prediction adjustment applied.
+              </div>
+            </div>
+
+            <div class="card stat-box mid-chassis">
+              <h4>Diversion Advisory</h4>
+              <div class="mid-screen signboard" id="signboardPanel" aria-live="polite" style="padding:12px; border-radius:8px; margin-top:8px;">
+                <div class="sb-line">&gt; SYSTEM NOMINAL</div>
+                <div class="sb-line dim">&gt; GREEN CORRIDOR READY<span class="blink">_</span></div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="card chart-chassis">
-        <h3>Congestion Probability</h3>
-        <div class="chart-screen">
-          <div class="chart-wrap">
-            <canvas id="congestionChart" role="img" aria-label="Congestion probability over last 60 minutes"></canvas>
+      </section>
+
+      <!-- ============================= VIEW 3: ANALYTICS ============================= -->
+      <section id="view-analytics" class="view-section hidden">
+        <header class="section-header">
+          <div>
+            <span class="section-eyebrow">Trends & Reports</span>
+            <h2>Historical Analytics & AI Forecasts</h2>
+          </div>
+          <div class="header-actions">
+            <select id="analytics-road-selector" class="glass-select">
+              <option value="all">All Intersections (Aggregated)</option>
+              <option value="r1">Road A · North Approach</option>
+              <option value="r2">Road B · East Corridor</option>
+            </select>
+            <button id="btn-load-history" class="glass-btn primary-btn">Load History</button>
+          </div>
+        </header>
+
+        <div class="analytics-grid">
+          <!-- Congestion Forecast Card -->
+          <div class="card mid-chassis span-2" style="padding: 20px;">
+            <h3>AI Congestion Probability Forecast</h3>
+            <div class="mid-screen" style="display:flex; align-items:center; justify-content:center; padding:20px 0;">
+              <div class="dial-wrap" style="text-align:center;">
+                <div id="predictDial" aria-hidden="true" style="margin: 0 auto 16px;"></div>
+                <div class="dial-text" style="font-family:var(--font-mono); font-size:16px;">
+                  Predicted delay: <b id="predictMins" aria-live="polite" style="color:var(--amber); font-size:20px;">--</b> min
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Congestion Probability Chart -->
+          <div class="card chart-chassis span-2" style="padding: 20px;">
+            <h3>Congestion Probability Trend (Last 60 Min)</h3>
+            <div class="chart-screen" style="height: 320px; padding: 10px 0;">
+              <canvas id="congestionChart" role="img" aria-label="Congestion probability over last 60 minutes"></canvas>
+            </div>
+          </div>
+
+          <!-- Historical Trend Simulators -->
+          <div class="card chart-chassis" style="padding: 20px;">
+            <h3>Weekly Vehicle Flow Variance</h3>
+            <div class="chart-screen" style="height: 220px;">
+              <canvas id="history-count-chart"></canvas>
+            </div>
+          </div>
+          <div class="card chart-chassis" style="padding: 20px;">
+            <h3>Average Speed Profile (km/h)</h3>
+            <div class="chart-screen" style="height: 220px;">
+              <canvas id="history-speed-chart"></canvas>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <!-- ============================= VIEW 4: OPERATIONS / ADMIN ============================= -->
+      <section id="view-admin" class="view-section hidden">
+        <header class="section-header">
+          <div>
+            <span class="section-eyebrow">Operations</span>
+            <h2>System Administration & Signal Control</h2>
+          </div>
+        </header>
+
+        <div class="admin-grid">
+          <!-- Manual Override Controls & Switches -->
+          <div class="card override-chassis" style="padding: 20px;">
+            <h3>Manual Overrides & Power Control</h3>
+            <div class="switch-row" style="display:flex; flex-direction:column; gap:16px; margin-top:16px;">
+              
+              <div class="switch-unit" style="display:flex; align-items:center; justify-content:space-between; padding:10px; background:var(--surface-dim); border-radius:10px; border:1px solid var(--glass-border);">
+                <span style="font-weight:600; font-size:13px;">System Power</span>
+                <div class="power-toggle on" id="powerToggle" role="switch" aria-checked="true" aria-label="System power" tabindex="0">
+                  <div class="knob"></div>
+                </div>
+              </div>
+
+              <div class="switch-unit" style="display:flex; align-items:center; justify-content:space-between; padding:10px; background:var(--surface-dim); border-radius:10px; border:1px solid var(--glass-border);">
+                <span style="font-weight:600; font-size:13px;">Autonomous AI Mode</span>
+                <div class="rocker on" id="swAuto" role="switch" aria-checked="true" aria-label="Auto mode" tabindex="0">
+                  <div class="rknob"></div>
+                </div>
+              </div>
+
+              <div class="switch-unit" style="display:flex; align-items:center; justify-content:space-between; padding:10px; background:var(--surface-dim); border-radius:10px; border:1px solid var(--glass-border);">
+                <span style="font-weight:600; font-size:13px;">YOLOv8 Camera Feed</span>
+                <div class="rocker on" id="swCamera" role="switch" aria-checked="true" aria-label="Camera feed" tabindex="0">
+                  <div class="rknob"></div>
+                </div>
+              </div>
+
+              <button class="emergency-btn" id="testEmergencyBtn" aria-label="Trigger emergency test mode" style="width:100%; margin-top:10px; padding:14px; font-size:12px;">
+                ▲ Trigger Green Corridor Override
+              </button>
+            </div>
+
+            <div style="margin-top:28px;">
+              <h3 style="margin-bottom:14px;">System Health & Resources</h3>
+              <div class="health-stats">
+                <div class="stat-row"><span>CPU Usage</span><div class="progress-bar"><div class="progress fill-blue" id="admin-cpu-bar" style="width:34%"></div></div><span id="admin-cpu-text">34%</span></div>
+                <div class="stat-row"><span>RAM Usage</span><div class="progress-bar"><div class="progress fill-purple" id="admin-ram-bar" style="width:52%"></div></div><span id="admin-ram-text">52%</span></div>
+                <div class="stat-row"><span>AI GPU Load</span><div class="progress-bar"><div class="progress fill-green" id="admin-gpu-bar" style="width:41%"></div></div><span id="admin-gpu-text">41%</span></div>
+                <div class="stat-row"><span>Disk I/O</span><div class="progress-bar"><div class="progress fill-blue" id="admin-disk-bar" style="width:28%"></div></div><span id="admin-disk-text">28%</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Signal Cycle Timing & Process Status -->
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div class="card mid-chassis" style="padding: 20px;">
+              <h3>Signal Cycle Timers (120s Adaptive Cycle)</h3>
+              <div class="mid-screen" style="margin-top: 12px;">
+                <div id="signalRows" role="list" aria-label="Per-lane signal timing"></div>
+              </div>
+            </div>
+
+            <div class="card" style="padding: 20px;">
+              <h3 style="font-family:var(--font-display); font-size:14px; margin-bottom:14px;">Active Backend Microservices</h3>
+              <div class="table-container">
+                <table class="glass-table">
+                  <thead>
+                    <tr><th>Service Name</th><th>Engine / Port</th><th>Status</th><th>Actions</th></tr>
+                  </thead>
+                  <tbody id="admin-processes-body">
+                    <tr>
+                      <td style="font-weight:600;">YOLOv8 Detection Service</td>
+                      <td>FastAPI · :8000</td>
+                      <td><span class="pill running"><i class="fa-solid fa-circle"></i> Running</span></td>
+                      <td><button class="pill-btn"><i class="fa-solid fa-rotate"></i> Ping</button></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:600;">WebSocket Telemetry Stream</td>
+                      <td>WebSockets · :8001</td>
+                      <td><span class="pill running"><i class="fa-solid fa-circle"></i> Connected</span></td>
+                      <td><button class="pill-btn"><i class="fa-solid fa-rotate"></i> Sync</button></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:600;">Adaptive Signal Controller</td>
+                      <td>RL Optimization Engine</td>
+                      <td><span class="pill running"><i class="fa-solid fa-circle"></i> Nominal</span></td>
+                      <td><button class="pill-btn"><i class="fa-solid fa-rotate"></i> Reset</button></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:600;">Live Video Streaming Feed</td>
+                      <td>MJPEG Streamer</td>
+                      <td><span class="pill running"><i class="fa-solid fa-circle"></i> Active</span></td>
+                      <td><button class="pill-btn"><i class="fa-solid fa-rotate"></i> Buffer</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================= VIEW 5: SETTINGS ============================= -->
+      <section id="view-settings" class="view-section hidden">
+        <header class="section-header">
+          <div>
+            <span class="section-eyebrow">Preferences</span>
+            <h2>System & Display Settings</h2>
+          </div>
+        </header>
+
+        <div class="card settings-panel" style="padding: 24px;">
+          <div class="setting-item">
+            <label>Dark Mode Theme</label>
+            <label class="switch">
+              <input type="checkbox" id="setting-dark-mode" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <!-- Hidden compatibility anchor for swNight required by app.js -->
+          <div id="swNight" class="rocker" style="display:none;" role="switch" aria-checked="false" tabindex="-1"><div class="rknob"></div></div>
+
+          <div class="setting-item">
+            <label>AI Audio / Voice Notifications</label>
+            <label class="switch"><input type="checkbox" id="setting-notifications" checked><span class="slider"></span></label>
+          </div>
+          <div class="setting-item">
+            <label>Auto-Refresh Real-Time Charts</label>
+            <label class="switch"><input type="checkbox" id="setting-autorefresh" checked><span class="slider"></span></label>
+          </div>
+          <div class="setting-item">
+            <label>High-Contrast Radar Overlay</label>
+            <label class="switch"><input type="checkbox" id="setting-highcontrast"><span class="slider"></span></label>
+          </div>
+          <div class="setting-item">
+            <label>YOLOv8 Bounding Box Transparency</label>
+            <select class="glass-select" style="min-width:120px;">
+              <option value="high">100% (Solid)</option>
+              <option value="med" selected>75% (Standard)</option>
+              <option value="low">50% (Subtle)</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============================= FLOATING CHATBOT ASSISTANT ============================= -->
+  <div id="chatbot-container" class="chatbot-container collapsed">
+    <div class="chatbot-header" id="chatbot-header">
+      <div class="chatbot-title"><i class="fa-solid fa-robot"></i> AI Traffic Assistant</div>
+      <button class="icon-btn" id="chatbot-toggle-btn" aria-label="Toggle assistant"><i class="fa-solid fa-chevron-up"></i></button>
     </div>
-
-    <!-- ═══ ACTIVITY CONSOLE ═══ -->
-    <div class="card console-chassis">
-      <h3>System Event Log</h3>
-      <div class="console-screen" id="consoleScreen" role="log" aria-live="polite" aria-label="System event log">
-      </div>
+    <div class="chatbot-body" id="chatbot-messages">
+      <div class="chat-message bot"><div class="bubble">Hello — I'm your SmartTraffic AI Assistant. All 4 intersection corridors and YOLOv8 detection streams are currently operating nominally.</div></div>
     </div>
+    <div class="chatbot-input">
+      <input type="text" id="chat-input" placeholder="Ask about road status, signal timing..." autocomplete="off">
+      <button id="chat-send-btn" class="icon-btn" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
 
-    <footer>JUNCTION CONSOLE · AI BACKEND INTEGRATION ACTIVE · YOLOV8 DETECTION ENGINE</footer>
-
-  </div><!-- /wrap -->
-
-  <!-- Toast container (outside .wrap so it floats above all content) -->
+  <!-- Toast Container (Kept outside app-container so it floats cleanly) -->
   <div id="toastContainer" aria-atomic="true"></div>
 
   <script src="app.js"></script>

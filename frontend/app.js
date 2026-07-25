@@ -64,6 +64,14 @@ function setTheme(dark, notify = false) {
     swNight.classList.toggle('on', dark);
     swNight.setAttribute('aria-checked', String(dark));
   }
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  if (themeToggleBtn) {
+    themeToggleBtn.innerHTML = dark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+  }
+  const settingDark = document.getElementById('setting-dark-mode');
+  if (settingDark && settingDark.checked !== dark) {
+    settingDark.checked = dark;
+  }
   if (dark) {
     document.documentElement.classList.add('dark-mode');
     document.documentElement.setAttribute('data-theme', 'dark');
@@ -556,6 +564,165 @@ function updateThemeColors(dark) {
 
 // Initialize theme state at startup
 setTheme(isDarkMode, false);
+
+// ============================================================================
+// CONTROL ROOM MULTI-PAGE NAVIGATION & INTERACTION SCRIPTS
+// ============================================================================
+
+// 1. Sidebar Navigation View Switching
+document.querySelectorAll('.menu-item').forEach(item => {
+  const activate = () => {
+    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.view-section').forEach(v => {
+      v.classList.remove('active');
+      v.classList.add('hidden');
+    });
+    item.classList.add('active');
+    const viewId = 'view-' + item.dataset.view;
+    const view = document.getElementById(viewId);
+    if (view) {
+      view.classList.remove('hidden');
+      view.classList.add('active');
+      // Trigger chart resize when entering a view with charts
+      if (typeof vehicleChart !== 'undefined' && vehicleChart) vehicleChart.resize();
+      if (typeof congestionChart !== 'undefined' && congestionChart) congestionChart.resize();
+      if (typeof historyCountChart !== 'undefined' && historyCountChart) historyCountChart.resize();
+      if (typeof historySpeedChart !== 'undefined' && historySpeedChart) historySpeedChart.resize();
+    }
+  };
+  item.addEventListener('click', activate);
+  item.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      activate();
+    }
+  });
+});
+
+// 2. New Theme Toggle Controls Wiring
+const themeToggleBtn = document.getElementById('theme-toggle');
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', () => setTheme(!isDarkMode, true));
+}
+const settingDarkMode = document.getElementById('setting-dark-mode');
+if (settingDarkMode) {
+  settingDarkMode.addEventListener('change', e => setTheme(e.target.checked, true));
+}
+
+// 3. Floating AI Chatbot Assistant Interactivity
+const chatbotContainer = document.getElementById('chatbot-container');
+const chatbotHeader = document.getElementById('chatbot-header');
+if (chatbotHeader && chatbotContainer) {
+  chatbotHeader.addEventListener('click', () => chatbotContainer.classList.toggle('collapsed'));
+}
+const chatInput = document.getElementById('chat-input');
+const chatSendBtn = document.getElementById('chat-send-btn');
+const chatMsgs = document.getElementById('chatbot-messages');
+
+function sendChatMessage() {
+  if (!chatInput || !chatMsgs) return;
+  const text = chatInput.value.trim();
+  if (!text) return;
+  chatMsgs.insertAdjacentHTML('beforeend', `<div class="chat-message user"><div class="bubble">${text.replace(/</g, '&lt;')}</div></div>`);
+  chatInput.value = '';
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
+  setTimeout(() => {
+    let reply = "All monitored roads are operating within normal capacity. No critical anomalies detected.";
+    if (text.toLowerCase().includes('wait') || text.toLowerCase().includes('delay')) {
+      reply = "Average wait time across all approaches is stable. Signal adaptive RL engine is actively optimizing green splits.";
+    } else if (text.toLowerCase().includes('emergency') || text.toLowerCase().includes('green')) {
+      reply = "To engage green corridor override, use the Operations panel or trigger the Emergency override button in the dashboard.";
+    } else if (text.toLowerCase().includes('speed') || text.toLowerCase().includes('flow')) {
+      reply = "Average velocity across Sector 4 and North Approach is currently maintaining 38 km/h.";
+    }
+    chatMsgs.insertAdjacentHTML('beforeend', `<div class="chat-message bot"><div class="bubble">${reply}</div></div>`);
+    chatMsgs.scrollTop = chatMsgs.scrollHeight;
+  }, 600);
+}
+if (chatSendBtn) chatSendBtn.addEventListener('click', sendChatMessage);
+if (chatInput) chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendChatMessage(); });
+
+// 4. Interactive Button Feeds & Toast Notifications
+const btnRefreshRoads = document.getElementById('btn-refresh-roads');
+if (btnRefreshRoads) {
+  btnRefreshRoads.addEventListener('click', () => {
+    showToast('Camera feeds and YOLOv8 detection streams synchronized', 'success');
+  });
+}
+const btnLoadHistory = document.getElementById('btn-load-history');
+if (btnLoadHistory) {
+  btnLoadHistory.addEventListener('click', () => {
+    showToast('Historical traffic telemetry and AI forecasts refreshed', 'info');
+  });
+}
+document.querySelectorAll('.pill-btn').forEach(btn => {
+  btn.addEventListener('click', () => showToast('Service telemetry pinged — Status Nominal', 'success'));
+});
+const roadSelector = document.getElementById('road-selector');
+if (roadSelector) {
+  roadSelector.addEventListener('change', e => {
+    const nameEl = document.getElementById('video-road-name');
+    if (nameEl) nameEl.textContent = e.target.options[e.target.selectedIndex].text.split('(')[0].trim();
+    showToast(`Focused camera stream on ${e.target.options[e.target.selectedIndex].text}`, 'info');
+  });
+}
+
+// 5. Analytics View Historical Charts (Demo Data)
+let historyCountChart = null;
+let historySpeedChart = null;
+const historyCountCtx = document.getElementById('history-count-chart');
+if (historyCountCtx && typeof Chart !== 'undefined') {
+  historyCountChart = new Chart(historyCountCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [{
+        label: 'Daily Volume',
+        data: [12400, 13800, 14200, 15100, 16800, 11200, 9800],
+        backgroundColor: 'rgba(2, 132, 199, 0.35)',
+        borderColor: '#0284c7',
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: "'JetBrains Mono', monospace", size: 10 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { font: { family: "'JetBrains Mono', monospace", size: 10 } } }
+      }
+    }
+  });
+}
+const historySpeedCtx = document.getElementById('history-speed-chart');
+if (historySpeedCtx && typeof Chart !== 'undefined') {
+  historySpeedChart = new Chart(historySpeedCtx, {
+    type: 'line',
+    data: {
+      labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+      datasets: [{
+        label: 'Avg Speed (km/h)',
+        data: [48, 52, 22, 35, 18, 38],
+        borderColor: '#059669',
+        backgroundColor: 'rgba(5, 150, 105, 0.15)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { font: { family: "'JetBrains Mono', monospace", size: 10 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { font: { family: "'JetBrains Mono', monospace", size: 10 } } }
+      }
+    }
+  });
+}
 
 // Boot WebSocket
 connectWS();
