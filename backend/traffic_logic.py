@@ -38,36 +38,47 @@ class TrafficController:
 
     def update(self, detections, fps, inference_time):
         current_counts = {"Car": 0, "Motorcycle": 0, "Bus": 0, "Truck": 0, "Person": 0, "TrafficSign": 0}
+
+        # lane_queues  : only genuinely queued vehicles (stationary or slow-moving)
+        #                → used for adaptive signal timing decisions
+        # lane_totals  : all detected vehicles in each lane (moving included)
+        #                → used for display / congestion percentage
         lane_queues = {"Road A": 0, "Road B": 0, "Road C": 0, "Road D": 0, "Pedestrian Crossing": 0}
-        
+        lane_totals = {"Road A": 0, "Road B": 0, "Road C": 0, "Road D": 0, "Pedestrian Crossing": 0}
+
         now = time.time()
         active_ids = set()
-        
+
         emergency_detected = False
 
         for det in detections:
-            cls = det['class_name']
-            track_id = det['track_id']
-            lane = det['lane']
+            print("Detected:", det["class_name"])
+            cls          = det['class_name']
+            track_id     = det['track_id']
+            lane         = det['lane']
+            is_queued    = det.get('is_queued', False)
+            motion_state = det.get('motion_state', 'moving')
             active_ids.add(track_id)
-            
-            # Counts
-            if cls in ["car"]: current_counts["Car"] += 1
-            elif cls in ["motorcycle", "bicycle"]: current_counts["Motorcycle"] += 1
-            elif cls in ["bus"]: current_counts["Bus"] += 1
-            elif cls in ["truck"]: current_counts["Truck"] += 1
-            elif cls in ["person"]: current_counts["Person"] += 1
-            elif cls in ["stop sign", "traffic light"]: current_counts["TrafficSign"] += 1
-            
+
+            # Vehicle type counts
+            if cls in ["car"]:                         current_counts["Car"]         += 1
+            elif cls in ["motorcycle", "bicycle"]:     current_counts["Motorcycle"]  += 1
+            elif cls in ["bus"]:                       current_counts["Bus"]         += 1
+            elif cls in ["truck"]:                     current_counts["Truck"]       += 1
+            elif cls in ["person"]:                    current_counts["Person"]      += 1
+            elif cls in ["stop sign", "traffic light"]:current_counts["TrafficSign"] += 1
+
             if cls in ["ambulance", "fire truck", "police"]:
                 emergency_detected = True
 
-            # Tracking wait times
+            # Wait-time tracking (first-seen timestamp per track)
             if track_id not in self.tracked_vehicles:
                 self.tracked_vehicles[track_id] = {"first_seen": now, "lane": lane}
-            
-            # Queue calculation
-            if lane in lane_queues:
+
+            # Per-lane totals (all vehicles) and queues (stopped/slow only)
+            if lane in lane_totals:
+                lane_totals[lane] += 1
+            if is_queued and lane in lane_queues:
                 lane_queues[lane] += 1
 
         # Cleanup lost tracks
@@ -101,37 +112,53 @@ class TrafficController:
             self.log("EMERGENCY CLEARED — RESUMING NORMAL OPERATION")
 
         total = sum(current_counts.values())
-        
-        # Adaptive Signal Timing based on REAL ROI queue length
-        lane_sum = sum([lane_queues[l["name"]] for l in self.lanes]) or 1
-        
-        for l in self.lanes:
-            l["queue"] = lane_queues[l["name"]]
-            
+
+        # --- Adaptive Signal Timing (now driven by queued vehicles only) ---
+        # lane_sum: total queued vehicles across all road arms (not pedestrian)
+        # Falls back to lane_totals if nothing is queued (e.g. free-flowing traffic)
+        road_queue_sum = sum(lane_queues[l["name"]] for l in self.lanes)
+        road_total_sum = sum(lane_totals[l["name"]] for l in self.lanes)
+
+        if road_queue_sum > 0:
+            # Normal operation: use real queue lengths for proportional timing
+            lane_sum = road_queue_sum
+            for l in self.lanes:
+                l["queue"] = lane_queues[l["name"]]
+        else:
+            # No queued vehicles detected (all traffic moving freely);
+            # fall back to total presence counts to avoid all lanes going to minimum
+            lane_sum = road_total_sum or 1
+            for l in self.lanes:
+                l["queue"] = lane_totals[l["name"]]
+
         max_idx = max(range(len(self.lanes)), key=lambda i: self.lanes[i]["queue"])
-        
+
         signal_lanes = []
         for i, l in enumerate(self.lanes):
-            share = l["queue"] / lane_sum
+            share    = l["queue"] / lane_sum
             time_sec = max(12, int(self.total_cycle * share))
-            
+
             if self.emergency_active:
-                state = "green" if i == 0 else "red" # Force Road A for demo logic if emergency
+                state = "green" if i == 0 else "red"
             else:
                 state = "green" if i == max_idx else ("amber" if share > 0.15 else "red")
-            
+
             signal_lanes.append(SignalLane(
                 name=l["name"], arm=l["arm"], time=time_sec, state=state
             ))
 
-        # Metrics based on real data
-        fuel_saved = round((avg_wait / 60.0) * 1.5, 1) # Heuristic using real wait
-        co2_cut = max(0, min(100, int((len(active_ids) * 2) - avg_wait)))
-        
-        # Congestion Score = vehicles / capacity
+        # Metrics
+        fuel_saved = round((avg_wait / 60.0) * 1.5, 1)
+        co2_cut    = max(0, min(100, int((len(active_ids) * 2) - avg_wait)))
+
+        # Congestion score: use total vehicles (moving + queued) for overall load,
+        # and queued proportion for the prediction percentage
         capacity_assumed = 40
-        lane_load = min(100, int((total / capacity_assumed) * 100))
-        predict_pct = min(100, lane_load + int(avg_wait / 10))
+        lane_load    = min(100, int((total / capacity_assumed) * 100))
+        queued_total = sum(lane_queues.values())
+        # predict_pct weights queued vehicles more heavily than moving ones
+        queue_ratio  = min(100, int((queued_total / max(1, total)) * 100))
+        predict_pct  = min(100, int(lane_load * 0.6 + queue_ratio * 0.4))
         predict_mins = max(3, int(15 - predict_pct / 10))
 
         # Update historical charts every ~5 seconds
@@ -153,7 +180,7 @@ class TrafficController:
                 pass
 
         signboard = [
-            f"> {self.lanes[max_idx]['name']}: HEAVY QUEUE ({self.lanes[max_idx]['queue']})",
+            f"> {self.lanes[max_idx]['name']}: QUEUE {self.lanes[max_idx]['queue']} VEH",
             "> AI OPTIMIZING SIGNALS",
             f"AVG DELAY: {avg_wait}s"
         ]

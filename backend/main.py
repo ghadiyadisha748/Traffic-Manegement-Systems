@@ -46,6 +46,7 @@ async def ai_loop():
             
             # Save historical stats to DB periodically inside traffic_controller, or here.
             state_dict = traffic_controller.update(detections, fps, inference_time)
+            print("Detections passed to controller:", detections) 
             
             await manager.broadcast_state(state_dict)
             
