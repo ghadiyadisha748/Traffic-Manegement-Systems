@@ -9,6 +9,17 @@
   <title>Junction Console — AI Traffic Control</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      if (localStorage.getItem('junction_theme') === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark-mode');
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 
