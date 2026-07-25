@@ -505,10 +505,10 @@ This project is open source and intended for educational and research purposes.
 
 # 👨‍💻 Author
 
-**Anvi Shah**
-**Heshvi Shah**
-**Anshika Badala**
-**Disha Ghadiya**
+**Anvi Shah**|
+**Heshvi Shah**|
+**Anshika Badala**|
+**Disha Ghadiya**|
 **Liza Soni**
 
 GitHub
