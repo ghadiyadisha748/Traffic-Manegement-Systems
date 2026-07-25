@@ -41,15 +41,6 @@ The dashboard provides a live AI camera feed, traffic signal visualization, cong
 
 Historical analytics including traffic trends, congestion probability, wait time estimation, and system event logging.
 
----
-
-# 🎥 Demo
-
-> Replace this section with a GIF of your project.
-
-<p align="center">
-<img src="docs/demo.gif" width="100%">
-</p>
 
 ---
 
