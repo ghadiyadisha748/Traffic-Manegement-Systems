@@ -201,43 +201,71 @@ SmartTraffic Dashboard
 
 # 📸 Project Showcase
 
-## 🖥️ SmartTraffic Dashboard
+SmartTraffic OS provides an AI-powered command center for intelligent traffic monitoring, adaptive signal control, congestion prediction, and system administration. Below is a walkthrough of each module in the platform.
+
+---
+
+## 🏠 Dashboard
 
 <p align="center">
-<img src="docs/dashboard-main.png" width="100%">
+  <img src="docs/dashboard.jpeg" width="100%" alt="SmartTraffic Dashboard">
 </p>
 
-The primary dashboard provides a centralized command center for monitoring live traffic conditions, AI detections, signal status, congestion levels, environmental impact, and operational controls in real time.
+The Dashboard provides a real-time overview of the traffic management system, displaying key performance indicators such as average waiting time, total detected vehicles, fuel savings, CO₂ emission reduction, lane utilization, and live traffic trends. It serves as the primary monitoring screen for traffic operators.
 
 ---
 
-## 📈 Analytics Dashboard
+## 🎥 Live Road Monitoring
 
 <p align="center">
-<img src="docs/dashboard-analytics.png" width="100%">
+  <img src="docs/monitoring.jpeg" width="100%" alt="Monitoring Dashboard">
 </p>
 
-The analytics panel visualizes historical traffic trends, congestion patterns, vehicle classifications, average waiting times, and overall system performance to assist in traffic planning and decision-making.
+The Monitoring module streams the live YOLOv8 detection feed with real-time object detection and tracking. It classifies vehicles, monitors pedestrian movement, displays environmental conditions, and provides AI-generated traffic insights to assist operators in managing road activity.
 
 ---
 
-## 🎯 Key Objectives
+## 📊 Historical Analytics & AI Forecasts
 
-✔ Reduce Traffic Congestion
+<p align="center">
+  <img src="docs/analytics.jpeg" width="100%" alt="Analytics Dashboard">
+</p>
 
-✔ Minimize Vehicle Waiting Time
-
-✔ Reduce Fuel Consumption
-
-✔ Lower Carbon Emissions
-
-✔ Improve Emergency Response
-
-✔ Enable Intelligent Traffic Monitoring
-
-✔ Support Smart City Infrastructure
+The Analytics module visualizes historical traffic patterns, congestion probability, predicted delays, and AI-generated forecasts. These insights enable authorities to analyze traffic behavior and make informed decisions for optimizing road infrastructure.
 
 ---
+
+## ⚙️ Operations & Signal Control
+
+<p align="center">
+  <img src="docs/operations.jpeg" width="100%" alt="Operations Dashboard">
+</p>
+
+The Operations panel allows administrators to monitor backend microservices, system resources, adaptive traffic signal timing, and AI processing status. It also provides manual control features for managing signal operations whenever necessary.
+
+---
+
+## 🔧 System Settings
+
+<p align="center">
+  <img src="docs/settings.jpeg" width="100%" alt="Settings Dashboard">
+</p>
+
+The Settings module provides interface customization and system configuration options, including Dark Mode, AI voice notifications, real-time chart refresh, radar visualization, and YOLOv8 detection display preferences.
+
+---
+
+## 🌟 SmartTraffic OS Modules
+
+| Module | Description |
+|---------|-------------|
+| 🏠 Dashboard | Live traffic KPIs and overall system overview |
+| 🎥 Monitoring | Real-time AI-powered vehicle detection and tracking |
+| 📊 Analytics | Historical reports, congestion prediction, and forecasting |
+| ⚙️ Operations | Backend monitoring, signal management, and system controls |
+| 🔧 Settings | User preferences and dashboard customization |
+
+Together, these modules create a comprehensive Smart Traffic Management System that leverages Artificial Intelligence, Computer Vision, and real-time analytics to improve traffic flow, reduce congestion, minimize emissions, and support smart city infrastructure.
 
 # 🧠 AI Processing Pipeline
 
@@ -497,10 +525,12 @@ SmartTraffic-AI/
 │   └── assets/
 │
 ├── docs/
-│   ├── dashboard-main.png
-│   ├── dashboard-analytics.png
-│   ├── architecture.png
-│   └── demo.gif
+├── dashboard.jpeg
+├── monitoring.jpeg
+├── analytics.jpeg
+├── operations.jpeg
+└── settings.jpeg
+|
 │
 ├── run_backend.bat
 ├── run_frontend.bat
