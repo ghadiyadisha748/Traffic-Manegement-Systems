@@ -54,6 +54,32 @@ let prevCongestion = '';
 let cameraAlive = true;
 let cameraTimer = null;
 let lastLogHash = '';  // Bug #3: diff-based console log
+let isDarkMode = localStorage.getItem('junction_theme') === 'dark';
+
+function setTheme(dark, notify = false) {
+  isDarkMode = dark;
+  localStorage.setItem('junction_theme', dark ? 'dark' : 'light');
+  const swNight = document.getElementById('swNight');
+  if (swNight) {
+    swNight.classList.toggle('on', dark);
+    swNight.setAttribute('aria-checked', String(dark));
+  }
+  if (dark) {
+    document.documentElement.classList.add('dark-mode');
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark-mode');
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+  document.body.style.filter = 'none';
+  document.documentElement.style.removeProperty('--bg-0');
+  if (typeof updateThemeColors === 'function') {
+    updateThemeColors(dark);
+  }
+  if (notify && typeof showToast === 'function') {
+    showToast(dark ? 'Futuristic Dark Theme Enabled' : 'Clean Light Theme Enabled', 'info');
+  }
+}
 
 // --- Toggle helper (power, rockers) ---
 function wireToggle(id, initial, cb) {
@@ -76,10 +102,21 @@ wireToggle('swCamera', true, v => {
   cameraOn = v;
   D.liveVideo.style.display = v ? 'block' : 'none';
 });
-wireToggle('swNight', false, v => {
-  document.documentElement.style.setProperty('--bg-0', v ? '#020407' : '#050810');
-  document.body.style.filter = v ? 'brightness(0.88) saturate(0.85)' : 'none';
-});
+const swNightEl = document.getElementById('swNight');
+if (swNightEl) {
+  swNightEl.classList.toggle('on', isDarkMode);
+  swNightEl.setAttribute('aria-checked', String(isDarkMode));
+  const handleNightToggle = () => {
+    setTheme(!isDarkMode, true);
+  };
+  swNightEl.addEventListener('click', handleNightToggle);
+  swNightEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleNightToggle();
+    }
+  });
+}
 
 // --- Toast ---
 function showToast(msg, type = 'info', duration = 4000) {
@@ -119,7 +156,7 @@ vehicleTypes.forEach(v => {
 function makeGauge(containerId, color) {
   const c = document.getElementById(containerId);
   if (!c) return null;
-  c.innerHTML = `<svg viewBox="0 0 150 90" style="color:${color}"><path d="M15,80 A60,60 0 1,1 135,80" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10" stroke-linecap="round"/><path class="arc" d="M15,80 A60,60 0 1,1 135,80" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264" style="transition:stroke-dashoffset 0.4s ease"/></svg>`;
+  c.innerHTML = `<svg viewBox="0 0 150 90" style="color:${color}"><path d="M15,80 A60,60 0 1,1 135,80" fill="none" stroke="var(--gauge-track)" stroke-width="10" stroke-linecap="round"/><path class="arc" d="M15,80 A60,60 0 1,1 135,80" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264" style="transition:stroke-dashoffset 0.4s ease"/></svg>`;
   return c.querySelector('.arc');
 }
 const gWait = makeGauge('gaugeWait', '#00d4ff');
@@ -136,7 +173,7 @@ function setGauge(arc, pct) {
 
 // --- Prediction Dial ---
 document.getElementById('predictDial').innerHTML =
-  `<svg viewBox="0 0 180 108" style="width:180px"><path d="M18,96 A72,72 0 1,1 162,96" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="12" stroke-linecap="round"/><path id="predictArc" d="M18,96 A72,72 0 1,1 162,96" fill="none" stroke="#ffb020" stroke-width="12" stroke-linecap="round" stroke-dasharray="317" stroke-dashoffset="80" style="transition:stroke-dashoffset 0.5s ease,stroke 0.3s"/><text id="predictText" x="90" y="78" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="24" font-weight="800" fill="#e8eaf6">0%</text></svg>`;
+  `<svg viewBox="0 0 180 108" style="width:180px"><path d="M18,96 A72,72 0 1,1 162,96" fill="none" stroke="var(--gauge-track)" stroke-width="12" stroke-linecap="round"/><path id="predictArc" d="M18,96 A72,72 0 1,1 162,96" fill="none" stroke="#ffb020" stroke-width="12" stroke-linecap="round" stroke-dasharray="317" stroke-dashoffset="80" style="transition:stroke-dashoffset 0.5s ease,stroke 0.3s"/><text id="predictText" x="90" y="78" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="24" font-weight="800" fill="var(--text-primary)">0%</text></svg>`;
 const predictArc = document.getElementById('predictArc');
 const predictText = document.getElementById('predictText');
 
@@ -195,13 +232,13 @@ setInterval(seedBlips, 4500);
 function drawRadar() {
   ctx.clearRect(0, 0, CW, CH);
   // Grid rings
-  ctx.strokeStyle = 'rgba(0,212,255,0.1)';
+  ctx.strokeStyle = isDarkMode ? 'rgba(0,212,255,0.1)' : 'rgba(2,132,199,0.15)';
   ctx.lineWidth = 1;
   for (let r = R * 0.33; r <= R; r += R * 0.33) {
     ctx.beginPath(); ctx.arc(CX, CY, r, 0, Math.PI * 2); ctx.stroke();
   }
   // Crosshairs
-  ctx.strokeStyle = 'rgba(0,212,255,0.15)';
+  ctx.strokeStyle = isDarkMode ? 'rgba(0,212,255,0.15)' : 'rgba(2,132,199,0.2)';
   ctx.setLineDash([5, 6]);
   ctx.beginPath();
   ctx.moveTo(CX, 0); ctx.lineTo(CX, CH);
@@ -214,7 +251,7 @@ function drawRadar() {
   ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2); ctx.clip();
   if (ctx.createConicGradient) {
     const g = ctx.createConicGradient(sweepAngle, CX, CY);
-    g.addColorStop(0, 'rgba(0,212,255,0.28)');
+    g.addColorStop(0, isDarkMode ? 'rgba(0,212,255,0.28)' : 'rgba(2,132,199,0.3)');
     g.addColorStop(0.07, 'rgba(0,212,255,0)');
     g.addColorStop(1, 'rgba(0,212,255,0)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, CW, CH);
@@ -238,9 +275,9 @@ function drawRadar() {
   ctx.restore();
 
   // Center dot
-  ctx.fillStyle = '#050810';
+  ctx.fillStyle = isDarkMode ? '#050810' : '#ffffff';
   ctx.beginPath(); ctx.arc(CX, CY, 12, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = 'rgba(0,212,255,0.3)';
+  ctx.strokeStyle = isDarkMode ? 'rgba(0,212,255,0.3)' : 'rgba(2,132,199,0.35)';
   ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.arc(CX, CY, 12, 0, Math.PI * 2); ctx.stroke();
 
@@ -486,6 +523,39 @@ function handleMessage(event) {
   // 11. Console log — Bug #3: diff-based
   updateConsole(data.logs);
 }
+
+// --- Theme Update Helper ---
+function updateThemeColors(dark) {
+  const gridColor = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+  const tickColor = dark ? 'rgba(232,234,246,0.35)' : '#475569';
+  
+  if (typeof vehicleChart !== 'undefined' && vehicleChart.options) {
+    if (vehicleChart.options.scales && vehicleChart.options.scales.x) {
+      vehicleChart.options.scales.x.grid.color = gridColor;
+      vehicleChart.options.scales.x.ticks.color = tickColor;
+    }
+    if (vehicleChart.options.scales && vehicleChart.options.scales.y) {
+      vehicleChart.options.scales.y.grid.color = gridColor;
+      vehicleChart.options.scales.y.ticks.color = tickColor;
+    }
+    vehicleChart.update('none');
+  }
+  
+  if (typeof congestionChart !== 'undefined' && congestionChart.options) {
+    if (congestionChart.options.scales && congestionChart.options.scales.x) {
+      congestionChart.options.scales.x.grid.color = gridColor;
+      congestionChart.options.scales.x.ticks.color = tickColor;
+    }
+    if (congestionChart.options.scales && congestionChart.options.scales.y) {
+      congestionChart.options.scales.y.grid.color = gridColor;
+      congestionChart.options.scales.y.ticks.color = tickColor;
+    }
+    congestionChart.update('none');
+  }
+}
+
+// Initialize theme state at startup
+setTheme(isDarkMode, false);
 
 // Boot WebSocket
 connectWS();
