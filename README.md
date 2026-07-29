@@ -184,6 +184,70 @@ SmartTraffic Dashboard
 
 ✅ Future Smart City Ready
 
+
+# Challenges
+
+- Real-time object tracking
+
+- Frame synchronization
+
+- WebSocket latency
+
+- Signal optimization logic
+
+- Multi-lane congestion analysis
+
+
+# Innovation
+
+Unlike traditional systems,
+
+our AI
+
+✔ predicts congestion
+
+✔ dynamically changes signals
+
+✔ prioritizes ambulances
+
+✔ reduces emissions
+
+✔ provides live analytics
+
+# Future Versions
+
+V1
+
+✔ Vehicle Detection
+
+V2
+
+✔ Adaptive Signals
+
+V3
+
+✔ Emergency Priority
+
+V4
+
+✔ RL Signal Optimization
+
+V5
+
+✔ Smart City Integration
+
+# Security
+
+Authentication
+
+Role-based Access
+
+Environment Variables
+
+API Validation
+
+HTTPS Ready
+
 ## 🌐 Backend
 
 - FastAPI REST APIs
