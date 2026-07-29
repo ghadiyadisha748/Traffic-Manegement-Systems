@@ -824,19 +824,19 @@ Potential benefits include:
 While the current system demonstrates these concepts using AI-based traffic analysis, future deployment with real-world traffic infrastructure could further enhance these benefits.
 
 ---
-# 📈 Experimental Results
+## 📈 Expected Performance
 
-Vehicle Detection Accuracy : 96%
 
-Average FPS : 28 FPS
-
-Signal Optimization : 35%
-
-Average Waiting Time Reduced : 30%
-
-Fuel Saving : 18%
-
-CO₂ Reduction : 20%
+- Vehicle Detection Accuracy: ~96% (YOLOv8 benchmark)
+  
+- Average Processing Speed: ~28 FPS
+  
+- Estimated Waiting Time Reduction: Up to 30%
+  
+- Estimated Fuel Savings: Up to 18%
+  
+- Estimated CO₂ Reduction: Up to 20%
+  
 
 # 🔮 Future Scope
 
