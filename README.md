@@ -170,6 +170,20 @@ SmartTraffic Dashboard
 
 ---
 
+# Why SmartTraffic AI?
+
+✅ Real-time Detection
+
+✅ Adaptive Signals
+
+✅ Emission Reduction
+
+✅ Emergency Priority
+
+✅ Smart Analytics
+
+✅ Future Smart City Ready
+
 ## 🌐 Backend
 
 - FastAPI REST APIs
